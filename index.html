@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Simulatore Illuminotecnico — Salvatore Siciliano</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#222222">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SimLuce">
+<link rel="apple-touch-icon" href="icons/icon.svg">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Georgia,serif;background:#f0f0ec;color:#222;padding:1.5rem 1rem 3rem}
@@ -228,6 +235,11 @@ function drawPrivateFront(p){
 }
 function EMAIL(){var via=el('via').value||'—';var p=(MODE==='public')?CALCPUBLIC():CALCPRIVATE();var b='SIMULATORE ILLUMINOTECNICO — Salvatore Siciliano\n\nLuogo: '+via+'\nTipo: '+(MODE==='public'?'illuminazione pubblica':'illuminazione privata')+'\n\nPotenza totale: '+p.totalW+' W\nConsumo/giorno: '+p.kwhDay.toFixed(2)+' kWh\nCosto/mese stimato: '+p.month.toFixed(2)+' €\nRaggio efficace: '+p.r.toFixed(1)+' m\n';window.location.href='mailto:?subject='+encodeURIComponent('Progetto illuminazione — '+via)+'&body='+encodeURIComponent(b)}
 DRAW();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(function(){});
+}
 </script>
 </body>
 </html>
