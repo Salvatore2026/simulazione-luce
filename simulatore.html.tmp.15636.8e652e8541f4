@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulatore Illuminotecnico — Salvatore Siciliano</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;background:#f0f0ec;color:#222;padding:1.5rem 1rem 3rem}
+h1{font-size:1.35rem;font-weight:500;text-align:center;margin-bottom:.15rem}
+h1 span{font-size:.75rem;color:#999;font-family:sans-serif;font-weight:400}
+.subtitle{text-align:center;font-size:.8rem;color:#888;margin-bottom:.9rem;font-family:sans-serif}
+.modebox{max-width:960px;margin:0 auto 1rem;background:#fff;border:.5px solid #ddd;border-radius:12px;padding:1rem 1.2rem}
+.mode-title{font:600 12px sans-serif;color:#777;text-align:center;margin-bottom:.7rem;letter-spacing:.06em;text-transform:uppercase}
+.modebuttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modebtn{padding:13px 10px;border:.5px solid #bbb;border-radius:10px;background:#f8f8f5;cursor:pointer;font:600 13px sans-serif;color:#333;transition:.15s;text-align:center}
+.modebtn small{display:block;font-weight:400;font-size:11px;color:#777;margin-top:4px;line-height:1.35}
+.modebtn.active{background:#222;color:#fff;border-color:#222}.modebtn.active small{color:#ddd}
+.via-row{display:flex;justify-content:center;margin-bottom:1.2rem}
+.via-row input{padding:7px 16px;border:.5px solid #ccc;border-radius:20px;font-size:13px;font-family:sans-serif;background:#fff;outline:none;width:380px;max-width:100%;text-align:center}
+.card{background:#fff;border-radius:12px;border:.5px solid #ddd;padding:1.1rem 1.4rem;max-width:960px;margin:0 auto 1rem}
+.ct{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:#aaa;font-family:sans-serif;margin-bottom:.8rem;border-bottom:.5px solid #f0f0ec;padding-bottom:.4rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}.g5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.fl label{display:block;font-size:11px;color:#777;margin-bottom:3px;font-family:sans-serif}.fl input[type=number],.fl select{width:100%;padding:8px 10px;border:.5px solid #ccc;border-radius:8px;font-size:14px;background:#fafafa;outline:none;font-family:sans-serif}.fl input:focus,.fl select:focus{border-color:#888;background:#fff}
+.sep{border:none;border-top:.5px solid #f0f0ec;margin:10px 0}.go{width:100%;padding:10px;font-size:13px;font-weight:500;margin-bottom:12px;cursor:pointer;border:.5px solid #bbb;border-radius:8px;background:#222;color:#fff;font-family:sans-serif}.go:hover{background:#444}
+.mrow{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.mc{flex:1;min-width:105px;background:#f4f4f0;border-radius:8px;padding:8px 10px;border:.5px solid #e8e8e0}.mc span{display:block;font-size:10px;color:#999;margin-bottom:2px;font-family:sans-serif}.mc strong{font-size:15px;font-weight:500;font-family:sans-serif}.hl{background:#fffbe6;border-color:#e0c060}.hl strong{color:#7a5c00}
+.info{background:#eef5ff;border:.5px solid #b8d0f0;border-radius:8px;padding:10px 14px;font-size:12px;font-family:sans-serif;color:#2a4a7a;line-height:1.75;margin-bottom:10px}.warn{background:#fff8e1;border:.5px solid #f0c040;border-radius:8px;padding:8px 12px;font-size:12px;color:#7a5c00;font-family:sans-serif;margin-bottom:10px;display:none}.privwarn{background:#eef8ec;border:.5px solid #b9d8ad;color:#315b2d}
+svg{display:block;border-radius:6px;overflow:hidden}.pbar{display:flex;gap:10px;justify-content:center;margin:1rem auto;max-width:960px;flex-wrap:wrap}.pbtn{padding:9px 20px;font-size:13px;font-family:sans-serif;border:.5px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:7px}.pbtn:hover{background:#f4f4f0}.pbtn svg{width:16px;height:16px}.hidden{display:none!important}
+@media(max-width:720px){body{padding:1rem .65rem 2rem}.card{padding:1rem}.g3,.g4,.g5{grid-template-columns:1fr 1fr}.modebuttons{grid-template-columns:1fr}.mc{min-width:130px}}
+@media(max-width:440px){.g2,.g3,.g4,.g5{grid-template-columns:1fr}.mc{min-width:100%}}
+@media print{body{background:#fff;padding:.5rem}.go,.pbar,.via-row,.modebox{display:none!important}.card{border:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<h1>Simulatore Illuminotecnico <span>by Salvatore Siciliano</span></h1>
+<p class="subtitle" id="SUBTITLE">Luce pubblica e privata — coni, distanze, copertura e consumi</p>
+
+<div class="modebox">
+  <div class="mode-title">Che tipo di illuminazione vuoi simulare?</div>
+  <div class="modebuttons">
+    <button id="BTN_PUBLIC" class="modebtn active" onclick="SETMODE('public')">Illuminazione pubblica<small>Strade, marciapiedi, pali, distanze tra punti luce.</small></button>
+    <button id="BTN_PRIVATE" class="modebtn" onclick="SETMODE('private')">Illuminazione privata<small>Cortili, ingressi, piazzali, giardini, garage e vialetti.</small></button>
+  </div>
+</div>
+
+<div class="via-row"><input type="text" id="via" placeholder="Nome luogo o via (es. Via Roma, cortile, ingresso…)"></div>
+
+<div class="card" id="PUBLIC_CARD">
+  <div class="ct">Illuminazione pubblica — palo e strada</div>
+  <div class="g4">
+    <div class="fl"><label>Altezza palo (m)</label><input type="number" id="H" value="8" min="2" max="20" step="0.5" oninput="DRAW()"></div>
+    <div class="fl"><label>Potenza per lampada (W)</label><input type="number" id="W" value="100" min="10" max="2000" step="10" oninput="DRAW()"></div>
+    <div class="fl"><label>Angolo fascio (°)</label><input type="number" id="ANG" value="60" min="10" max="120" step="5" oninput="DRAW()"></div>
+    <div class="fl"><label>Inclinazione verso strada (°)</label><input type="number" id="TILT" value="0" min="-30" max="30" step="5" oninput="DRAW()"></div>
+  </div>
+  <div class="g3">
+    <div class="fl"><label>Efficienza (lm/W)</label><input type="number" id="LMW" value="100" min="30" max="250" step="5" oninput="DRAW()"></div>
+    <div class="fl"><label>Soglia illuminamento (lx)</label><input type="number" id="MINLUX" value="10" min="1" max="100" step="1" oninput="DRAW()"></div>
+    <div class="fl"><label>Forma cono</label><select id="SHAPE" onchange="DRAW()"><option value="circle">Cerchio — simmetrica</option><option value="ellipse">Ellisse — stradale</option></select></div>
+  </div>
+  <hr class="sep">
+  <div class="g5">
+    <div class="fl"><label>Lunghezza tratto (m)</label><input type="number" id="LEN" value="80" min="5" max="1000" step="5" oninput="DRAW()"></div>
+    <div class="fl"><label>Largh. marciapiede (m)</label><input type="number" id="SW" value="2.5" min="0.5" max="20" step="0.5" oninput="DRAW()"></div>
+    <div class="fl"><label>Largh. strada (m)</label><input type="number" id="RW" value="7" min="2" max="40" step="0.5" oninput="DRAW()"></div>
+    <div class="fl"><label>N° pali</label><input type="number" id="NP" value="4" min="1" max="60" step="1" oninput="DRAW()"></div>
+    <div class="fl"><label>Lato pali</label><select id="SIDE" onchange="DRAW()"><option value="left">Sinistra</option><option value="right">Destra</option><option value="both">Entrambi</option></select></div>
+  </div>
+  <div class="g4">
+    <div class="fl"><label>Sovrapposizione coni (%)</label><input type="number" id="OVLP" value="20" min="0" max="70" step="5" oninput="DRAW()"></div>
+    <div class="fl"><label>Pendenza (%)</label><input type="number" id="SLOPE" value="0" min="-25" max="25" step="1" oninput="DRAW()"></div>
+    <div class="fl"><label>Ore uso/giorno</label><input type="number" id="HOURS" value="10" min="0" max="24" step="0.5" oninput="DRAW()"></div>
+    <div class="fl"><label>Costo energia €/kWh</label><input type="number" id="COST" value="0.30" min="0" max="2" step="0.01" oninput="DRAW()"></div>
+  </div>
+  <div class="info"><b>Nota pratica.</b> La potenza aumenta o riduce i lux. Per stringere davvero il cono devi agire soprattutto su <b>angolo fascio</b> e <b>inclinazione</b>. Se la luce invade troppo la strada, prova un angolo più stretto e orienta meglio la plafoniera.</div>
+</div>
+
+<div class="card hidden" id="PRIVATE_CARD">
+  <div class="ct">Illuminazione privata — area e punto luce</div>
+  <div class="g4">
+    <div class="fl"><label>Altezza luce da terra (m)</label><input type="number" id="PH" value="3" min="1" max="15" step="0.5" oninput="DRAW()"></div>
+    <div class="fl"><label>Potenza per punto luce (W)</label><input type="number" id="PW" value="30" min="5" max="1000" step="5" oninput="DRAW()"></div>
+    <div class="fl"><label>Angolo fascio (°)</label><input type="number" id="PANG" value="80" min="10" max="140" step="5" oninput="DRAW()"></div>
+    <div class="fl"><label>Inclinazione verso area (°)</label><input type="number" id="PTILT" value="10" min="-30" max="45" step="5" oninput="DRAW()"></div>
+  </div>
+  <div class="g4">
+    <div class="fl"><label>Efficienza (lm/W)</label><input type="number" id="PLMW" value="100" min="30" max="250" step="5" oninput="DRAW()"></div>
+    <div class="fl"><label>Soglia illuminamento (lx)</label><input type="number" id="PMINLUX" value="10" min="1" max="100" step="1" oninput="DRAW()"></div>
+    <div class="fl"><label>Tipo luce</label><select id="PTYPE" onchange="DRAW()"><option value="applique">Applique / parete</option><option value="faro">Faretto direzionale</option><option value="palo">Paletto / lampione</option><option value="plafoniera">Plafoniera</option></select></div>
+    <div class="fl"><label>N° punti luce</label><input type="number" id="PN" value="1" min="1" max="40" step="1" oninput="DRAW()"></div>
+  </div>
+  <hr class="sep">
+  <div class="g5">
+    <div class="fl"><label>Lunghezza area (m)</label><input type="number" id="PLEN" value="10" min="1" max="200" step="1" oninput="DRAW()"></div>
+    <div class="fl"><label>Larghezza area (m)</label><input type="number" id="PWID" value="6" min="1" max="100" step="0.5" oninput="DRAW()"></div>
+    <div class="fl"><label>Distanza luce dal bordo/muro (m)</label><input type="number" id="POFF" value="0.5" min="0" max="30" step="0.5" oninput="DRAW()"></div>
+    <div class="fl"><label>Ore uso/giorno</label><input type="number" id="PHOURS" value="6" min="0" max="24" step="0.5" oninput="DRAW()"></div>
+    <div class="fl"><label>Costo energia €/kWh</label><input type="number" id="PCOST" value="0.30" min="0" max="2" step="0.01" oninput="DRAW()"></div>
+  </div>
+  <div class="info"><b>Uso privato.</b> Serve per capire come si comporta una luce in cortili, ingressi, piazzali o giardini. Per ridurre luce dispersa nel vuoto o sul muro, stringi l'<b>angolo fascio</b>, correggi l'<b>inclinazione</b> e scegli una potenza proporzionata all'area.</div>
+</div>
+
+<div class="card">
+  <div class="ct">Risultati</div>
+  <div id="WARN" class="warn"></div>
+  <div class="mrow" id="METRICS"></div>
+</div>
+
+<div class="card"><div class="ct" id="L_TITLE">Vista laterale — profilo</div><svg id="SL" width="100%" viewBox="0 0 900 210"></svg></div>
+<div class="card"><div class="ct" id="T_TITLE">Vista dall'alto — planimetria</div><svg id="ST" width="100%" viewBox="0 0 900 320" style="cursor:pointer"></svg></div>
+<div class="card"><div class="ct" id="F_TITLE">Vista frontale — sezione</div><svg id="SF" width="100%" viewBox="0 0 900 280"></svg></div>
+
+<div class="pbar">
+<button class="pbtn" onclick="window.print()">Stampa / salva PDF</button>
+<button class="pbtn" onclick="EMAIL()">Invia email</button>
+</div>
+
+<script>
+var MODE='public';
+var SEL=0;
+function el(id){return document.getElementById(id)}
+function v(id,def){var e=el(id);if(!e)return def;var n=parseFloat(e.value);return isNaN(n)?def:n}
+function s(id,def){var e=el(id);return e?e.value:def}
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+function SETMODE(m){MODE=m;el('BTN_PUBLIC').classList.toggle('active',m==='public');el('BTN_PRIVATE').classList.toggle('active',m==='private');el('PUBLIC_CARD').classList.toggle('hidden',m!=='public');el('PRIVATE_CARD').classList.toggle('hidden',m!=='private');el('SUBTITLE').textContent=(m==='public')?'Illuminazione pubblica — strade, pali, distanze e consumi':'Illuminazione privata — cortili, ingressi, piazzali, giardini e consumi';SEL=0;DRAW()}
+function coneGeom(H,ang,tilt){var t=tilt*Math.PI/180, half=ang*Math.PI/180/2, ax=Math.PI/2+t;var a=ax-half,b=ax+half;var r1=H/Math.tan(a),r2=H/Math.tan(b);var left=Math.min(r1,r2),right=Math.max(r1,r2);var width=Math.abs(right-Math.max(left,0));if(!isFinite(width)||width<0.1)width=0.1;return width}
+function effRadius(W,lmw,minlx,geo){var lm=W*lmw;var r=Math.sqrt(lm/(Math.PI*Math.max(minlx,0.1)));return Math.max(0.1,Math.min(geo,r))}
+function metric(label,val,hi){return '<div class="mc '+(hi?'hl':'')+'"><span>'+label+'</span><strong>'+val+'</strong></div>'}
+function CALCPUBLIC(){var H=v('H',8),W=v('W',100),ang=v('ANG',60),tilt=v('TILT',0),lmw=v('LMW',100),minlx=v('MINLUX',10),len=v('LEN',80),sw=v('SW',2.5),rw=v('RW',7),slope=v('SLOPE',0),ovlp=v('OVLP',20),numP=Math.max(1,Math.round(v('NP',4))),side=s('SIDE','left'),shape=s('SHAPE','circle'),hours=v('HOURS',10),cost=v('COST',0.30);var geo=coneGeom(H,ang,tilt),r=effRadius(W,lmw,minlx,geo);var dist=Math.max(0.2,r*2*(1-ovlp/100));var points=numP*(side==='both'?2:1);var totalW=points*W;var kwhDay=totalW*hours/1000;var month=kwhDay*30*cost;var roadWaste=clamp(((r-sw)/Math.max(r,0.1))*100,0,100);var cov=clamp(r/sw*100,0,100);var illum=(W*lmw)/(Math.PI*r*r);var span=(numP>1)?(numP-1)*dist:0;var scX=(900-70)/Math.max(span||dist,0.1);return {mode:'public',H,W,ang,tilt,lmw,minlx,len,sw,rw,slope,ovlp,numP,side,shape,hours,cost,geo,r,dist,points,totalW,kwhDay,month,roadWaste,cov,illum,span,scX}}
+function privateCfg(type){
+  if(type==='faro')return {label:'Faretto direzionale',rx:1.15,ry:0.45,shift:0.75,source:'wall',fixture:'spot',geoMul:0.65};
+  if(type==='palo')return {label:'Paletto / lampione',rx:0.75,ry:0.75,shift:0.00,source:'ground',fixture:'pole',geoMul:0.90};
+  if(type==='plafoniera')return {label:'Plafoniera',rx:1.00,ry:1.00,shift:0.00,source:'ceiling',fixture:'ceiling',geoMul:1.15};
+  return {label:'Applique / parete',rx:0.85,ry:0.55,shift:0.45,source:'wall',fixture:'applique',geoMul:0.85};
+}
+function CALCPRIVATE(){
+  var H=v('PH',3),W=v('PW',30),ang=v('PANG',80),tilt=v('PTILT',10),lmw=v('PLMW',100),minlx=v('PMINLUX',10),type=s('PTYPE','applique'),n=Math.max(1,Math.round(v('PN',1))),len=v('PLEN',10),wid=v('PWID',6),off=v('POFF',0.5),hours=v('PHOURS',6),cost=v('PCOST',0.30);
+  var cfg=privateCfg(type);
+  var geo=coneGeom(H,ang,tilt)*cfg.geoMul;
+  var r=effRadius(W,lmw,minlx,geo);
+  var beamX=r*cfg.rx, beamY=r*cfg.ry;
+  var points=n,totalW=n*W,kwhDay=totalW*hours/1000,month=kwhDay*30*cost;
+  var area=len*wid,coverOne=Math.PI*beamX*beamY;
+  var cover=clamp((coverOne*n)/Math.max(area,0.1)*100,0,100);
+  var waste=clamp(((coverOne*n-area)/Math.max(coverOne*n,0.1))*100,0,100);
+  var illum=(W*lmw)/(Math.PI*Math.max(beamX*beamY,0.1));
+  var dist=(n>1)?len/(n-1):0;
+  var scX=(900-70)/Math.max(len,1);
+  return {mode:'private',H,W,ang,tilt,lmw,minlx,type,cfg,n,len,wid,off,hours,cost,geo,r,beamX,beamY,points,totalW,kwhDay,month,area,cover,waste,illum,dist,scX};
+}
+function DRAW(){var p=(MODE==='public')?CALCPUBLIC():CALCPRIVATE();if(MODE==='public'&&SEL>=p.numP)SEL=p.numP-1;if(SEL<0)SEL=0;drawMetrics(p);if(MODE==='public'){drawPublicSide(p);drawPublicTop(p);drawPublicFront(p)}else{drawPrivateSide(p);drawPrivateTop(p);drawPrivateFront(p)}}
+function drawMetrics(p){var h='';var warn='';if(p.mode==='public'){h+=metric('N° punti luce',p.points,true);h+=metric('Distanza tra pali',p.dist.toFixed(1)+' m',true);h+=metric('Raggio efficace',p.r.toFixed(1)+' m',false);h+=metric('Copertura marciapiede',p.cov.toFixed(0)+'%',false);h+=metric('Luce su strada',p.roadWaste.toFixed(0)+'%',false);h+=metric('Consumo/giorno',p.kwhDay.toFixed(2)+' kWh',true);h+=metric('Costo/mese',p.month.toFixed(2)+' €',true);h+=metric('Potenza totale',p.totalW+' W',false);if(p.r<p.sw)warn='Il cono efficace non copre tutto il marciapiede. Aumenta angolo, altezza o potenza, oppure abbassa la soglia lux.';if(p.span>p.len)warn+=' I pali occupano '+p.span.toFixed(1)+' m ma il tratto è '+p.len.toFixed(0)+' m.'}else{h+=metric('Tipo luce',p.cfg.label,true);h+=metric('N° punti luce',p.points,true);h+=metric('Area da coprire',p.area.toFixed(0)+' m²',true);h+=metric('Raggio efficace',p.r.toFixed(1)+' m',false);h+=metric('Copertura stimata',p.cover.toFixed(0)+'%',false);h+=metric('Luce dispersa stimata',p.waste.toFixed(0)+'%',false);h+=metric('Consumo/giorno',p.kwhDay.toFixed(2)+' kWh',true);h+=metric('Costo/mese',p.month.toFixed(2)+' €',true);h+=metric('Potenza totale',p.totalW+' W',false);if(p.cover<90)warn='La copertura stimata non raggiunge tutta l\'area. Puoi aumentare potenza, aprire l\'angolo, aggiungere punti luce o cambiare altezza.'}el('METRICS').innerHTML=h;el('WARN').textContent=warn;el('WARN').style.display=warn?'block':'none';if(p.mode==='private')el('WARN').classList.add('privwarn');else el('WARN').classList.remove('privwarn')}
+function drawPublicSide(p){el('L_TITLE').textContent='Vista laterale — profilo con pali';var CW=900,CH=210,mL=50,mR=20,gY=150,scX=p.scX,scY=8;var html='<rect width="900" height="210" fill="#13202e"/><rect x="50" y="150" width="830" height="28" fill="#77776d"/><rect x="50" y="178" width="830" height="32" fill="#555547"/>';for(var i=0;i<p.numP;i++){var x=mL+i*p.dist*scX;var topY=gY-p.H*scY;var tilt=p.tilt*Math.PI/180;var topX=x+Math.sin(tilt)*p.H*scY;var base=p.r*scX;var a=(i===SEL)?0.45:0.18;html+='<polygon points="'+topX+','+topY+' '+(topX-base)+','+gY+' '+(topX+base)+','+gY+'" fill="rgba(255,220,80,'+a+')" stroke="rgba(255,220,80,.65)"/>';html+='<line x1="'+x+'" y1="'+gY+'" x2="'+topX+'" y2="'+topY+'" stroke="#aaa" stroke-width="4" stroke-linecap="round"/><rect x="'+(topX-13)+'" y="'+(topY-4)+'" width="26" height="8" rx="2" fill="#ffd700"/><text x="'+x+'" y="198" fill="rgba(255,255,255,.45)" font-size="9" font-family="sans-serif" text-anchor="middle">P'+(i+1)+'</text>'}el('SL').innerHTML=html}
+function drawPublicTop(p){el('T_TITLE').textContent='Vista dall\'alto — planimetria stradale';var CW=900,CH=320,mL=50,mR=20,scX=p.scX,total=p.sw+p.rw+(p.side==='both'?p.sw:0),scY=Math.min(210/total,38),y0=55,sw=p.sw*scY,rw=p.rw*scY,roadTop,roadBot,poleY1,poleY2;if(p.side==='right'){roadTop=y0;roadBot=y0+rw;poleY1=roadBot+sw/2}else{poleY1=y0+sw/2;roadTop=y0+sw;roadBot=roadTop+rw;poleY2=roadBot+sw/2}var html='<rect width="900" height="320" fill="#4a4a42"/><rect x="50" y="'+roadTop+'" width="830" height="'+rw+'" fill="#383832"/><line x1="50" y1="'+((roadTop+roadBot)/2)+'" x2="880" y2="'+((roadTop+roadBot)/2)+'" stroke="rgba(255,255,0,.6)" stroke-width="2" stroke-dasharray="22 12"/>';if(p.side!=='right')html+='<rect x="50" y="'+y0+'" width="830" height="'+sw+'" fill="#77776d"/>';if(p.side==='right')html+='<rect x="50" y="'+roadBot+'" width="830" height="'+sw+'" fill="#77776d"/>';if(p.side==='both')html+='<rect x="50" y="'+roadBot+'" width="830" height="'+sw+'" fill="#77776d"/>';var rx=p.r*scX,ry=(p.shape==='ellipse')?rx*.4:rx;for(var i=0;i<p.numP;i++){var x=mL+i*p.dist*scX;var ys=(p.side==='both')?[poleY1,poleY2]:[poleY1];for(var j=0;j<ys.length;j++){html+='<ellipse cx="'+x+'" cy="'+ys[j]+'" rx="'+rx+'" ry="'+ry+'" fill="rgba(255,220,80,.09)" stroke="rgba(255,220,80,.75)"/><circle cx="'+x+'" cy="'+ys[j]+'" r="6" fill="'+(i===SEL?'#fff':'#ffd700')+'" onclick="SEL='+i+';DRAW()"/>'}html+='<text x="'+x+'" y="300" fill="rgba(255,255,255,.35)" font-size="9" font-family="sans-serif" text-anchor="middle">P'+(i+1)+'</text>'}el('ST').innerHTML=html}
+function drawPublicFront(p){el('F_TITLE').textContent='Vista frontale — sezione strada/marciapiede';var CW=900,CH=280,gY=205,sc=30,total=p.sw+p.rw+(p.side==='both'?p.sw:0);if(total*sc>820)sc=820/total;var sw=p.sw*sc,rw=p.rw*sc,x0=450-(total*sc)/2;var roadX=(p.side==='right')?x0:x0+sw;var poleX=(p.side==='right')?roadX+rw+sw/2:x0+sw/2;var html='<rect width="900" height="205" fill="#1a2a3a"/><rect y="205" width="900" height="75" fill="#555547"/><rect x="'+roadX+'" y="180" width="'+rw+'" height="25" fill="#33332e"/><rect x="'+x0+'" y="180" width="'+sw+'" height="25" fill="#888880"/>';if(p.side==='both')html+='<rect x="'+(roadX+rw)+'" y="180" width="'+sw+'" height="25" fill="#888880"/>';var pH=Math.min(p.H*sc,160),topY=gY-pH,topX=poleX+Math.sin(p.tilt*Math.PI/180)*pH,base=p.r*sc;html+='<polygon points="'+topX+','+topY+' '+(topX-base)+','+gY+' '+(topX+base)+','+gY+'" fill="rgba(255,220,80,.18)" stroke="rgba(255,220,80,.75)"/><line x1="'+poleX+'" y1="'+gY+'" x2="'+topX+'" y2="'+topY+'" stroke="#aaa" stroke-width="5" stroke-linecap="round"/><rect x="'+(topX-15)+'" y="'+(topY-4)+'" width="30" height="9" rx="2" fill="#ffd700"/><text x="450" y="265" fill="rgba(255,220,80,.8)" font-size="10" font-family="sans-serif" text-anchor="middle">Ø cono efficace '+p.r.toFixed(1)+' m</text>';el('SF').innerHTML=html}
+function drawPrivateSide(p){
+  el('L_TITLE').textContent='Vista laterale — '+p.cfg.label;
+  var gY=155, scX=820/Math.max(p.wid,1), scY=34;
+  var topX=100, topY=gY-p.H*scY, center=topX+p.off*scX+Math.tan(p.tilt*Math.PI/180)*p.H*scY+p.cfg.shift*p.r*scX;
+  var base=p.beamX*scX;
+  var html='<rect width="900" height="210" fill="#142233"/><rect y="155" width="900" height="55" fill="#5b5b4e"/><line x1="80" y1="'+gY+'" x2="860" y2="'+gY+'" stroke="rgba(255,255,255,.15)"/>';
+  if(p.cfg.source==='wall'){html+='<rect x="55" y="45" width="25" height="110" fill="#777"/>';}
+  if(p.cfg.source==='ceiling'){html+='<rect x="45" y="40" width="820" height="12" fill="#777"/>';topX=450;topY=52;center=450+Math.tan(p.tilt*Math.PI/180)*p.H*scY;}
+  if(p.cfg.source==='ground'){topX=450;topY=gY-p.H*scY;center=450+Math.tan(p.tilt*Math.PI/180)*p.H*scY;}
+  html+='<polygon points="'+topX+','+topY+' '+(center-base)+','+gY+' '+(center+base)+','+gY+'" fill="rgba(255,220,80,.22)" stroke="rgba(255,220,80,.75)"/>';
+  if(p.cfg.fixture==='spot')html+='<circle cx="'+topX+'" cy="'+topY+'" r="8" fill="#ffd700"/><line x1="'+topX+'" y1="'+topY+'" x2="'+(topX+22)+'" y2="'+(topY+8)+'" stroke="#ffd700" stroke-width="5" stroke-linecap="round"/>';
+  else if(p.cfg.fixture==='pole')html+='<line x1="450" y1="'+gY+'" x2="'+topX+'" y2="'+topY+'" stroke="#aaa" stroke-width="5"/><rect x="'+(topX-16)+'" y="'+(topY-4)+'" width="32" height="8" rx="2" fill="#ffd700"/>';
+  else if(p.cfg.fixture==='ceiling')html+='<rect x="'+(topX-22)+'" y="'+(topY-5)+'" width="44" height="10" rx="5" fill="#ffd700"/>';
+  else html+='<rect x="'+(topX-6)+'" y="'+(topY-6)+'" width="24" height="12" rx="3" fill="#ffd700"/>';
+  html+='<text x="455" y="190" fill="rgba(255,255,255,.45)" font-size="10" font-family="sans-serif" text-anchor="middle">'+p.cfg.label+' — larghezza area '+p.wid+' m</text>';
+  el('SL').innerHTML=html;
+}
+function drawPrivateTop(p){
+  el('T_TITLE').textContent="Vista dall'alto — "+p.cfg.label;
+  var m=55,aw=790,ah=210,sx=aw/Math.max(p.len,1),sy=ah/Math.max(p.wid,1);
+  var rX=p.beamX*sx,rY=p.beamY*sy;
+  var html='<rect width="900" height="320" fill="#3d4a3d"/><rect x="'+m+'" y="'+m+'" width="'+aw+'" height="'+ah+'" fill="#596b52" stroke="rgba(255,255,255,.35)"/><text x="450" y="38" fill="rgba(255,255,255,.65)" font-size="12" font-family="sans-serif" text-anchor="middle">'+p.len+' m × '+p.wid+' m — '+p.cfg.label+'</text>';
+  for(var i=0;i<p.n;i++){
+    var x=(p.n===1)?m+p.off*sx:m+(p.len*(i/(p.n-1)))*sx;
+    var y=m+p.wid*sy/2;
+    if(p.cfg.source==='wall')y=m+14;
+    var cx=x+p.cfg.shift*p.r*sx;
+    html+='<ellipse cx="'+cx+'" cy="'+y+'" rx="'+rX+'" ry="'+rY+'" fill="rgba(255,220,80,.13)" stroke="rgba(255,220,80,.75)"/>';
+    if(p.cfg.fixture==='spot')html+='<polygon points="'+x+','+y+' '+(cx-rX)+','+(y+rY)+' '+(cx+rX)+','+(y+rY)+'" fill="rgba(255,220,80,.07)" stroke="rgba(255,220,80,.35)"/>';
+    html+='<circle cx="'+x+'" cy="'+y+'" r="6" fill="#ffd700"/><text x="'+x+'" y="'+(y+22)+'" fill="rgba(255,255,255,.6)" font-size="9" font-family="sans-serif" text-anchor="middle">L'+(i+1)+'</text>';
+  }
+  el('ST').innerHTML=html;
+}
+function drawPrivateFront(p){
+  el('F_TITLE').textContent='Vista frontale — '+p.cfg.label;
+  var gY=205,sc=38;if(p.wid*sc>780)sc=780/p.wid;
+  var x0=450-p.wid*sc/2,topX=x0+p.off*sc,topY=gY-p.H*sc,base=p.beamX*sc;
+  if(p.cfg.source==='ground'){topX=450;topY=gY-p.H*sc}else if(p.cfg.source==='ceiling'){topX=450;topY=52}else if(p.cfg.source==='wall'){topX=x0;topY=gY-p.H*sc}
+  var center=topX+p.cfg.shift*p.r*sc+Math.tan(p.tilt*Math.PI/180)*p.H*sc;
+  var html='<rect width="900" height="205" fill="#1a2a3a"/><rect y="205" width="900" height="75" fill="#555547"/><rect x="'+x0+'" y="180" width="'+(p.wid*sc)+'" height="25" fill="#6b6b5f"/>';
+  if(p.cfg.source==='wall')html+='<rect x="'+(x0-18)+'" y="70" width="18" height="135" fill="#777"/>';
+  if(p.cfg.source==='ceiling')html+='<rect x="'+x0+'" y="45" width="'+(p.wid*sc)+'" height="10" fill="#777"/>';
+  html+='<polygon points="'+topX+','+topY+' '+(center-base)+','+gY+' '+(center+base)+','+gY+'" fill="rgba(255,220,80,.19)" stroke="rgba(255,220,80,.75)"/>';
+  if(p.cfg.fixture==='pole')html+='<line x1="'+topX+'" y1="'+gY+'" x2="'+topX+'" y2="'+topY+'" stroke="#aaa" stroke-width="5"/><rect x="'+(topX-16)+'" y="'+(topY-4)+'" width="32" height="8" rx="2" fill="#ffd700"/>';
+  else if(p.cfg.fixture==='ceiling')html+='<rect x="'+(topX-24)+'" y="'+(topY-5)+'" width="48" height="10" rx="5" fill="#ffd700"/>';
+  else if(p.cfg.fixture==='spot')html+='<circle cx="'+topX+'" cy="'+topY+'" r="8" fill="#ffd700"/><line x1="'+topX+'" y1="'+topY+'" x2="'+(topX+22)+'" y2="'+(topY+8)+'" stroke="#ffd700" stroke-width="5" stroke-linecap="round"/>';
+  else html+='<rect x="'+(topX-4)+'" y="'+(topY-8)+'" width="22" height="16" rx="3" fill="#ffd700"/>';
+  html+='<text x="450" y="264" fill="rgba(255,220,80,.8)" font-size="10" font-family="sans-serif" text-anchor="middle">'+p.cfg.label+' — raggio '+p.r.toFixed(1)+' m</text>';
+  el('SF').innerHTML=html;
+}
+function EMAIL(){var via=el('via').value||'—';var p=(MODE==='public')?CALCPUBLIC():CALCPRIVATE();var b='SIMULATORE ILLUMINOTECNICO — Salvatore Siciliano\n\nLuogo: '+via+'\nTipo: '+(MODE==='public'?'illuminazione pubblica':'illuminazione privata')+'\n\nPotenza totale: '+p.totalW+' W\nConsumo/giorno: '+p.kwhDay.toFixed(2)+' kWh\nCosto/mese stimato: '+p.month.toFixed(2)+' €\nRaggio efficace: '+p.r.toFixed(1)+' m\n';window.location.href='mailto:?subject='+encodeURIComponent('Progetto illuminazione — '+via)+'&body='+encodeURIComponent(b)}
+DRAW();
+</script>
+</body>
+</html>

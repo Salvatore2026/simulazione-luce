@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulatore Illuminotecnico — Salvatore Siciliano</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;background:#f0f0ec;color:#222;padding:1.5rem 1rem 3rem}
+h1{font-size:1.3rem;font-weight:500;text-align:center;margin-bottom:.15rem}
+h1 span{font-size:.75rem;color:#999;font-family:sans-serif;font-weight:400}
+.subtitle{text-align:center;font-size:.8rem;color:#888;margin-bottom:.7rem;font-family:sans-serif}
+.via-row{display:flex;justify-content:center;margin-bottom:1.2rem}
+.via-row input{padding:7px 16px;border:.5px solid #ccc;border-radius:20px;font-size:13px;font-family:sans-serif;background:#fff;outline:none;width:380px;text-align:center}
+.via-row input:focus{border-color:#888}
+.card{background:#fff;border-radius:12px;border:.5px solid #ddd;padding:1.1rem 1.4rem;max-width:960px;margin:0 auto 1rem}
+.ct{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:#aaa;font-family:sans-serif;margin-bottom:.8rem;border-bottom:.5px solid #f0f0ec;padding-bottom:.4rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.g5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.fl label{display:block;font-size:11px;color:#777;margin-bottom:3px;font-family:sans-serif}
+.fl input[type=number],.fl select{width:100%;padding:8px 10px;border:.5px solid #ccc;border-radius:8px;font-size:14px;background:#fafafa;outline:none;font-family:sans-serif;transition:border-color .15s}
+.fl input[type=number]::-webkit-inner-spin-button,.fl input[type=number]::-webkit-outer-spin-button{-webkit-appearance:auto;width:22px;opacity:1}
+.fl input:focus,.fl select:focus{border-color:#888;background:#fff}
+.sep{border:none;border-top:.5px solid #f0f0ec;margin:10px 0}
+.go{width:100%;padding:10px;font-size:13px;font-weight:500;margin-bottom:12px;cursor:pointer;border:.5px solid #bbb;border-radius:8px;background:#222;color:#fff;font-family:sans-serif;transition:background .15s}
+.go:hover{background:#444}
+.mrow{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.mc{flex:1;min-width:90px;background:#f4f4f0;border-radius:8px;padding:8px 10px;border:.5px solid #e8e8e0}
+.mc span{display:block;font-size:10px;color:#999;margin-bottom:2px;font-family:sans-serif}
+.mc strong{font-size:15px;font-weight:500;font-family:sans-serif}
+.hl{background:#fffbe6;border-color:#e0c060}
+.hl strong{color:#7a5c00}
+.info{background:#eef5ff;border:.5px solid #b8d0f0;border-radius:8px;padding:10px 14px;font-size:12px;font-family:sans-serif;color:#2a4a7a;line-height:1.75;margin-bottom:10px}
+.info b{font-weight:600}
+.warn{background:#fff8e1;border:.5px solid #f0c040;border-radius:8px;padding:8px 12px;font-size:12px;color:#7a5c00;font-family:sans-serif;margin-bottom:10px;display:none}
+.vlbl{font-size:10px;color:#999;text-align:center;margin-bottom:4px;font-family:sans-serif;text-transform:uppercase;letter-spacing:.06em}
+svg{display:block;border-radius:6px;overflow:hidden}
+.pbar{display:flex;gap:10px;justify-content:center;margin:1rem auto;max-width:960px;flex-wrap:wrap}
+.pbtn{padding:9px 20px;font-size:13px;font-family:sans-serif;border:.5px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .15s}
+.pbtn:hover{background:#f4f4f0}
+.pbtn svg{width:16px;height:16px}
+@media(max-width:620px){.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}.g5{grid-template-columns:1fr 1fr}}
+@media print{body{background:#fff;padding:.5rem}.go,.pbar,.via-row{display:none!important}.card{border:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<h1>Simulatore Illuminotecnico <span>by Salvatore Siciliano</span></h1>
+<p class="subtitle">Progettazione illuminazione stradale — pali, distanze, planimetria</p>
+<div class="via-row"><input type="text" id="via" placeholder="Nome della via (es. Via Roma…)"></div>
+
+<div class="card">
+  <div class="ct">Palo e lampada</div>
+  <div class="g4">
+    <div class="fl"><label>Altezza palo (m)</label><input type="number" id="H" value="8" min="2" max="20" step="0.5" oninput="DRAW()"></div>
+    <div class="fl"><label>Potenza (W)</label><input type="number" id="W" value="100" min="10" max="2000" step="10" oninput="DRAW()"></div>
+    <div class="fl"><label>Angolo fascio (°)</label><input type="number" id="ANG" value="60" min="10" max="120" step="5" oninput="DRAW()"></div>
+    <div class="fl"><label>Inclinazione (°)</label><input type="number" id="TILT" value="0" min="-30" max="30" step="5" oninput="DRAW()"></div>
+  </div>
+  <div class="g3">
+    <div class="fl"><label>Efficienza (lm/W)</label><input type="number" id="LMW" value="100" min="30" max="250" step="5" oninput="DRAW()"></div>
+    <div class="fl"><label>Soglia illuminamento (lx)</label><input type="number" id="MINLUX" value="10" min="1" max="100" step="1" oninput="DRAW()"></div>
+    <div class="fl"><label>Forma cono</label>
+      <select id="SHAPE" onchange="DRAW()">
+        <option value="circle">Cerchio — plafoniera simmetrica</option>
+        <option value="ellipse">Ellisse — plafoniera stradale</option>
+      </select>
+    </div>
+  </div>
+  <hr class="sep">
+  <div class="ct">Via</div>
+  <div class="g5">
+    <div class="fl"><label>Lunghezza tratto (m)</label><input type="number" id="LEN" value="80" min="5" max="1000" step="5"></div>
+    <div class="fl"><label>Largh. marciapiede (m)</label><input type="number" id="SW" value="2.5" min="0.5" max="20" step="0.5"></div>
+    <div class="fl"><label>Largh. strada (m)</label><input type="number" id="RW" value="7" min="2" max="40" step="0.5"></div>
+    <div class="fl"><label>Pendenza (%)</label><input type="number" id="SLOPE" value="0" min="-25" max="25" step="1"></div>
+    <div class="fl"><label>Lato pali</label>
+      <select id="SIDE">
+        <option value="left">Sinistra</option>
+        <option value="right">Destra</option>
+        <option value="both">Entrambi</option>
+      </select>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="fl"><label>N° pali</label><input type="number" id="NP" value="4" min="1" max="60" step="1"></div>
+    <div class="fl"><label>Sovrapposizione coni (%)</label><input type="number" id="OVLP" value="20" min="0" max="70" step="5"></div>
+    <div class="fl"></div>
+  </div>
+
+  <div class="info">
+    <b>Come funziona il cono di luce</b><br>
+    L'<b>angolo del fascio</b> e l'<b>inclinazione</b> del palo determinano la forma e l'apertura geometrica del cono — sono caratteristiche ottiche della plafoniera e non cambiano con la potenza.<br>
+    La <b>potenza</b> determina quanta luce cade dentro quel cono. Il <b>raggio efficace</b> è fino a dove l'illuminamento supera la soglia minima impostata: con più watt la soglia viene raggiunta più lontano, con meno watt si restringe.<br>
+    Plafoniera <b>simmetrica</b> → cerchio al suolo. Plafoniera <b>stradale asimmetrica</b> → ellisse allungata lungo la carreggiata, per coprire più metri lineari con meno pali.
+  </div>
+  <div id="WARN" class="warn">Il cono efficace non copre l'intero marciapiede. Aumenta potenza, altezza o angolo del fascio, o abbassa la soglia lux.</div>
+
+  <button class="go" onclick="DRAW()">Calcola e disegna</button>
+
+  <div class="mrow">
+    <div class="mc hl"><span>N° pali</span><strong id="O_N">—</strong></div>
+    <div class="mc hl"><span>Distanza tra pali</span><strong id="O_D">—</strong></div>
+    <div class="mc"><span>Raggio efficace (m)</span><strong id="O_R">—</strong></div>
+    <div class="mc"><span>Copertura marciapiede</span><strong id="O_C">—</strong></div>
+    <div class="mc"><span>Illuminamento al centro</span><strong id="O_E">—</strong></div>
+    <div class="mc"><span>Potenza totale</span><strong id="O_P">—</strong></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Vista laterale — profilo con dislivello</div>
+  <svg id="SL" width="100%" viewBox="0 0 900 190"></svg>
+</div>
+
+<div class="card">
+  <div class="ct">Vista dall'alto — planimetria</div>
+  <p style="font-size:11px;color:#aaa;font-family:sans-serif;margin-bottom:6px">Clicca su un palo per vedere la sua sezione in basso.</p>
+  <svg id="ST" width="100%" viewBox="0 0 900 300" style="cursor:pointer"></svg>
+</div>
+
+<div class="card">
+  <div class="ct">Vista frontale — sezione trasversale <span id="PLBL" style="font-size:10px;color:#aaa;font-family:sans-serif"></span></div>
+  <svg id="SF" width="100%" viewBox="0 0 900 270"></svg>
+</div>
+
+<div class="pbar">
+  <button class="pbtn" onclick="window.print()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>Stampa
+  </button>
+  <button class="pbtn" onclick="window.print()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></svg>Salva PDF
+  </button>
+  <button class="pbtn" onclick="EMAIL()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>Invia email
+  </button>
+</div>
+
+<script>
+var SEL = 0;
+
+/* ── LETTURA PARAMETRI ───────────────────────────────── */
+function v(id,def){ var el=document.getElementById(id); return el?(parseFloat(el.value)||def):def; }
+function s(id,def){ var el=document.getElementById(id); return el?el.value:def; }
+
+function CALC(){
+  var H     = v('H',8);
+  var W     = v('W',100);
+  var ang   = v('ANG',60);
+  var tilt  = v('TILT',0);
+  var lmw   = v('LMW',100);
+  var minlx = v('MINLUX',10);
+  var len   = v('LEN',80);
+  var sw    = v('SW',2.5);
+  var rw    = v('RW',7);
+  var slope = v('SLOPE',0);
+  var ovlp  = v('OVLP',20);
+  var numP  = Math.max(1, Math.round(v('NP',4)));
+  var side  = s('SIDE','left');
+  var shape = s('SHAPE','circle');
+
+  /* cono geometrico: dipende da H, angolo, inclinazione */
+  var tR   = tilt * Math.PI / 180;
+  var half = ang  * Math.PI / 180 / 2;
+  var ax   = Math.PI/2 + tR;
+  var r1   = H / Math.tan(ax - half);
+  var r2   = H / Math.tan(ax + half);
+  var rGeo = Math.abs(r2 - Math.max(Math.min(r1,r2), 0));
+  if(rGeo < 0.1) rGeo = 0.1;
+
+  /* raggio efficace: dipende da potenza e soglia lux */
+  var lm   = W * lmw;
+  var rEff = Math.sqrt(lm / (Math.PI * Math.max(minlx, 0.1)));
+
+  /* raggio disegnato: il minore dei due */
+  var rDraw = Math.min(rGeo, rEff);
+  if(rDraw < 0.1) rDraw = 0.1;
+
+  /* distanza tra pali: da rDraw e sovrapposizione */
+  var dist = rDraw * 2 * (1 - ovlp/100);
+  if(dist < 0.2) dist = 0.2;
+
+  /* illuminamento al centro */
+  var illum = lm / (Math.PI * rDraw * rDraw);
+
+  /* copertura marciapiede */
+  var cov = Math.min(100, (rDraw / sw) * 100);
+  var coverOK = rDraw >= sw;
+  document.getElementById('WARN').style.display = coverOK ? 'none' : 'block';
+
+  var totalW = numP * (side==='both' ? 2 : 1) * W;
+
+  document.getElementById('O_N').textContent = numP + (side==='both' ? ' × 2' : '');
+  document.getElementById('O_D').textContent = dist.toFixed(1) + ' m';
+  document.getElementById('O_R').textContent = rDraw.toFixed(1) + ' m';
+  document.getElementById('O_C').textContent = cov.toFixed(0) + '%';
+  document.getElementById('O_E').textContent = illum.toFixed(1) + ' lx';
+  document.getElementById('O_P').textContent = totalW + ' W';
+
+  /* scX unico — calcolato sui margini della laterale (mL=50,mR=20,CW=900)
+     tutte le viste usano questo numero: un metro = stesso numero di pixel ovunque */
+  var _span = (numP > 1) ? (numP - 1) * dist : dist;
+  var scX   = (900 - 50 - 20) / Math.max(_span, 0.1);
+
+  return {H,W,ang,tilt,lmw,minlx,len,sw,rw,slope,ovlp,numP,side,shape,rGeo,rEff,rDraw,dist,illum,cov,scX};
+}
+
+/* ── SCALA COMUNE ────────────────────────────────────── */
+/* scX: pixel per metro. Si basa sulla distanza tra pali
+   e numP, così i pali riempiono sempre il canvas.
+   Il cono in pixel è sempre rDraw*scX — proporzionale alla distanza. */
+function getScale(p, canvasW, marginL, marginR){
+  var usable = canvasW - marginL - marginR;
+  var span   = (p.numP > 1) ? (p.numP - 1) * p.dist : p.dist;
+  return usable / Math.max(span, 0.1);
+}
+
+/* ── VISTA LATERALE ──────────────────────────────────── */
+function drawLateral(p){
+  var CW=900, CH=190, mL=50, mR=20, mT=22, mB=42;
+  var scX  = p.scX;
+  var scY  = (CH - mT - mB) * 0.55 / p.H;
+  var usable = CW - mL - mR;
+  var slopeF = p.slope / 100;
+
+  function gx(x){ return mL + x * scX; }
+  function gy(x){ return mT + (CH-mT-mB)*0.72 - x * slopeF * scX * 0.3; }
+
+  var g0 = gy(0), gN = gy((p.numP-1)*p.dist);
+
+  var html = '';
+  html += '<rect x="0" y="0" width="'+CW+'" height="'+CH+'" fill="#13202e"/>';
+  html += '<polygon points="'+mL+','+mT+' '+(CW-mR)+','+mT+' '+(CW-mR)+','+gN+' '+mL+','+g0+'" fill="#1a2a3a"/>';
+  html += '<polygon points="'+mL+','+g0+' '+(CW-mR)+','+gN+' '+(CW-mR)+','+(CH-mB)+' '+mL+','+(CH-mB)+'" fill="#5a5a48"/>';
+  var spH = 16;
+  html += '<polygon points="'+mL+','+(g0-spH)+' '+(CW-mR)+','+(gN-spH)+' '+(CW-mR)+','+gN+' '+mL+','+g0+'" fill="#888880"/>';
+  html += '<line x1="'+mL+'" y1="'+(g0-spH)+'" x2="'+(CW-mR)+'" y2="'+(gN-spH)+'" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>';
+
+  var tR   = p.tilt * Math.PI / 180;
+
+  for(var i=0; i<p.numP; i++){
+    var px   = i * p.dist;
+    var gndY = gy(px);
+    var pxH  = p.H * scY;
+    var topX = gx(px) + Math.sin(tR) * pxH;
+    var topY = gndY - pxH;
+
+    /* base cono = rDraw in pixel, centrata sotto la testa del palo */
+    var cBase = p.rDraw * scX;
+    var shift = Math.tan(tR) * pxH;
+    var lgX   = topX + shift - cBase;
+    var rgX   = topX + shift + cBase;
+
+    var alpha = (i===SEL) ? '0.45' : '0.15';
+    html += '<polygon points="'+topX+','+topY+' '+lgX+','+gndY+' '+rgX+','+gndY+'" fill="rgba(255,220,80,'+alpha+')" stroke="rgba(255,220,80,'+(i===SEL?'0.8':'0.3')+')" stroke-width="0.8" stroke-linejoin="round"/>';
+    html += '<line x1="'+gx(px)+'" y1="'+gndY+'" x2="'+topX+'" y2="'+topY+'" stroke="#999" stroke-width="3" stroke-linecap="round"/>';
+    html += '<rect x="'+(topX-13)+'" y="'+(topY-4)+'" width="26" height="8" rx="2" fill="#ffd700"/>';
+    html += '<text x="'+gx(px)+'" y="'+(CH-mB+13)+'" fill="rgba(255,255,255,0.3)" font-size="8" font-family="sans-serif" text-anchor="middle">P'+(i+1)+'</text>';
+    html += '<text x="'+gx(px)+'" y="'+(CH-mB+23)+'" fill="rgba(255,200,80,0.45)" font-size="8" font-family="sans-serif" text-anchor="middle">'+Math.round(px)+'m</text>';
+  }
+
+  if(Math.abs(p.slope)>0){
+    var rise = (p.numP-1)*p.dist*p.slope/100;
+    html += '<text x="'+(CW-mR)+'" y="'+(mT+11)+'" fill="rgba(255,180,80,0.7)" font-size="9" font-family="sans-serif" text-anchor="end">pendenza '+p.slope+'%  dislivello '+(rise>0?'+':'')+rise.toFixed(1)+'m</text>';
+  }
+
+  document.getElementById('SL').innerHTML = html;
+}
+
+/* ── VISTA DALL'ALTO ─────────────────────────────────── */
+function drawTop(p){
+  var CW=900, CH=300, mL=50, mR=20, mT=28, mB=28;
+  var scX = p.scX;
+
+  /* altezze sezioni in pixel — proporzionali ai metri reali */
+  var totalM = p.sw + p.rw + (p.side==='both' ? p.sw : 0);
+  var avail  = CH - mT - mB;
+  var scW    = Math.min(avail / totalM, 45);
+  var sw_px  = p.sw * scW;
+  var rw_px  = p.rw * scW;
+  var total_px = sw_px + rw_px + (p.side==='both' ? sw_px : 0);
+  var cy0    = mT + (avail - total_px) / 2;
+
+  var cR  = p.rDraw * scX;
+  var ryR = cR;
+
+  var sw1T, sw1B, rdT, rdB, sw2T, sw2B, poleY, poleY2;
+
+  if(p.side==='left' || p.side==='both'){
+    sw1T = cy0;          sw1B = cy0 + sw_px;
+    rdT  = sw1B;         rdB  = rdT + rw_px;
+    sw2T = rdB;          sw2B = rdB + (p.side==='both' ? sw_px : 0);
+    poleY  = (sw1T + sw1B) / 2;
+    poleY2 = (p.side==='both') ? (sw2T + sw2B) / 2 : poleY;
+  } else {
+    rdT  = cy0;          rdB  = cy0 + rw_px;
+    sw1T = rdB;          sw1B = rdB + sw_px;
+    poleY = (sw1T + sw1B) / 2;
+    poleY2 = poleY;
+  }
+
+  var roadMidY = (rdT + rdB) / 2;
+
+  var html = '';
+  html += '<rect x="0" y="0" width="'+CW+'" height="'+CH+'" fill="#4a4a42"/>';
+
+  /* marciapiede(i) */
+  function sidewalk(top, bot){
+    html += '<rect x="'+mL+'" y="'+top+'" width="'+(CW-mL-mR)+'" height="'+(bot-top)+'" fill="#7a7a72"/>';
+  }
+  if(p.side==='left'  || p.side==='both') sidewalk(sw1T, sw1B);
+  if(p.side==='right')                    sidewalk(sw1T, sw1B);
+  if(p.side==='both')                     sidewalk(sw2T, sw2B);
+
+  /* bordi marciapiede */
+  if(p.side==='left'||p.side==='both')  html += '<line x1="'+mL+'" y1="'+sw1B+'" x2="'+(CW-mR)+'" y2="'+sw1B+'" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>';
+  if(p.side==='right')                  html += '<line x1="'+mL+'" y1="'+sw1T+'" x2="'+(CW-mR)+'" y2="'+sw1T+'" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>';
+  if(p.side==='both')                   html += '<line x1="'+mL+'" y1="'+sw2T+'" x2="'+(CW-mR)+'" y2="'+sw2T+'" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>';
+
+  /* mezzaria — orizzontale, lungo la strada */
+  html += '<line x1="'+mL+'" y1="'+roadMidY+'" x2="'+(CW-mR)+'" y2="'+roadMidY+'" stroke="rgba(255,255,0,0.65)" stroke-width="2" stroke-dasharray="22 12"/>';
+
+  /* coni */
+  for(var i=0; i<p.numP; i++){
+    var px = mL + i * p.dist * scX;
+    var ys = (p.side==='both') ? [poleY, poleY2] : [poleY];
+    for(var si=0; si<ys.length; si++){
+      var cy = ys[si];
+      for(var k=4; k>=1; k--){
+        var f=k/4, op=(0.22-f*0.15).toFixed(3);
+        html += '<ellipse cx="'+px+'" cy="'+cy+'" rx="'+(cR*f)+'" ry="'+(ryR*f)+'" fill="rgba(255,220,80,'+op+')" stroke="none"/>';
+      }
+      html += '<ellipse cx="'+px+'" cy="'+cy+'" rx="'+cR+'" ry="'+ryR+'" fill="rgba(255,220,80,0.05)" stroke="rgba(255,220,80,'+(i===SEL?'1':'0.65')+')" stroke-width="'+(i===SEL?'2':'1.2')+'"/>';
+    }
+  }
+
+  /* pali cliccabili */
+  for(var i=0; i<p.numP; i++){
+    var px = mL + i * p.dist * scX;
+    var ys = (p.side==='both') ? [poleY, poleY2] : [poleY];
+    for(var si=0; si<ys.length; si++){
+      html += '<circle cx="'+px+'" cy="'+ys[si]+'" r="6" fill="'+(i===SEL?'#fff':'#ffd700')+'" stroke="rgba(255,255,255,0.7)" stroke-width="1" onclick="SEL='+i+';DRAW()" style="cursor:pointer"/>';
+    }
+    html += '<text x="'+px+'" y="'+(CH-mB+14)+'" fill="rgba(255,255,255,0.3)" font-size="9" font-family="sans-serif" text-anchor="middle">P'+(i+1)+'</text>';
+  }
+
+  /* etichette stradali */
+  var midX = mL + (CW-mL-mR)/2;
+  if(p.side==='left'||p.side==='both')
+    html += '<text x="'+midX+'" y="'+((sw1T+sw1B)/2+4)+'" fill="rgba(255,255,255,0.6)" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="500">marciapiede '+p.sw+'m</text>';
+  if(p.side==='right')
+    html += '<text x="'+midX+'" y="'+((sw1T+sw1B)/2+4)+'" fill="rgba(255,255,255,0.6)" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="500">marciapiede '+p.sw+'m</text>';
+  if(p.side==='both')
+    html += '<text x="'+midX+'" y="'+((sw2T+sw2B)/2+4)+'" fill="rgba(255,255,255,0.6)" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="500">marciapiede '+p.sw+'m</text>';
+  html += '<text x="'+midX+'" y="'+(roadMidY+4)+'" fill="rgba(255,255,255,0.4)" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="500">strada '+p.rw+'m</text>';
+  html += '<text x="'+midX+'" y="'+(roadMidY+17)+'" fill="rgba(255,255,0,0.4)" font-size="9" font-family="sans-serif" text-anchor="middle">mezzaria</text>';
+
+  /* quota distanza tra pali */
+  if(p.numP>1){
+    var x1=mL, x2=mL+p.dist*scX, qy=mT-10;
+    html += '<line x1="'+x1+'" y1="'+qy+'" x2="'+x2+'" y2="'+qy+'" stroke="rgba(255,220,80,0.65)" stroke-width="1"/>';
+    html += '<line x1="'+x1+'" y1="'+(qy-4)+'" x2="'+x1+'" y2="'+(qy+4)+'" stroke="rgba(255,220,80,0.65)" stroke-width="1"/>';
+    html += '<line x1="'+x2+'" y1="'+(qy-4)+'" x2="'+x2+'" y2="'+(qy+4)+'" stroke="rgba(255,220,80,0.65)" stroke-width="1"/>';
+    html += '<text x="'+((x1+x2)/2)+'" y="'+(qy-4)+'" fill="rgba(255,220,80,0.9)" font-size="9" font-family="sans-serif" text-anchor="middle">'+p.dist.toFixed(1)+'m</text>';
+  }
+
+  document.getElementById('ST').innerHTML = html;
+}
+
+/* ── VISTA FRONTALE ──────────────────────────────────── */
+function drawFront(p){
+  var CW=900, CH=270, gY=CH-65;
+  var cx = CW/2;
+  var scM = 28;
+
+  var sw_px = p.sw * scM;
+  var rw_px = p.rw * scM;
+  var tot   = sw_px + rw_px + (p.side==='both' ? sw_px : 0);
+  /* riduci se non ci sta */
+  if(tot > CW-80){ scM=(CW-100)/(p.sw+p.rw+(p.side==='both'?p.sw:0)); sw_px=p.sw*scM; rw_px=p.rw*scM; tot=sw_px+rw_px+(p.side==='both'?sw_px:0); }
+
+  var pH  = Math.min(p.H * scM, gY - 30);
+  var tR  = p.tilt * Math.PI / 180;
+  var half= p.ang  * Math.PI / 180 / 2;
+  var ax  = Math.PI/2 + tR;
+  var spH = 22;
+
+  /* posizioni orizzontali */
+  var rdL, rdR, sw1L, sw1R, sw2L, sw2R;
+  if(p.side==='left' || p.side==='both'){
+    sw1L=cx-tot/2; sw1R=sw1L+sw_px;
+    rdL=sw1R;      rdR=rdL+rw_px;
+    sw2L=rdR;      sw2R=sw2L+(p.side==='both'?sw_px:0);
+  } else {
+    rdL=cx-tot/2;  rdR=rdL+rw_px;
+    sw1L=rdR;      sw1R=sw1L+sw_px;
+    sw2L=sw1L;     sw2R=sw1R;
+  }
+
+  var bX1 = sw1L + sw_px/2;
+  var tX1 = bX1 + Math.sin(tR)*pH;
+  var tY1 = gY - pH;
+  var lgX1= tX1 + (gY-tY1)/Math.tan(ax-half);
+  var rgX1= tX1 + (gY-tY1)/Math.tan(ax+half);
+
+  var html = '';
+  html += '<rect x="0" y="0" width="'+CW+'" height="'+gY+'" fill="#1a2a3a"/>';
+  html += '<rect x="0" y="'+gY+'" width="'+CW+'" height="'+(CH-gY)+'" fill="#5a5a48"/>';
+  /* carreggiata */
+  html += '<rect x="'+rdL+'" y="'+(gY-spH)+'" width="'+rw_px+'" height="'+spH+'" fill="#3a3a30"/>';
+  /* marciapiede(i) */
+  html += '<rect x="'+sw1L+'" y="'+(gY-spH)+'" width="'+sw_px+'" height="'+spH+'" fill="#888880"/>';
+  html += '<line x1="'+sw1R+'" y1="'+(gY-spH)+'" x2="'+sw1R+'" y2="'+gY+'" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>';
+  if(p.side==='both'){
+    html += '<rect x="'+sw2L+'" y="'+(gY-spH)+'" width="'+sw_px+'" height="'+spH+'" fill="#888880"/>';
+    html += '<line x1="'+sw2L+'" y1="'+(gY-spH)+'" x2="'+sw2L+'" y2="'+gY+'" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>';
+  }
+  /* mezzaria */
+  var midX=(rdL+rdR)/2;
+  html += '<line x1="'+midX+'" y1="'+(gY-spH)+'" x2="'+midX+'" y2="'+gY+'" stroke="rgba(255,255,0,0.5)" stroke-width="1.5" stroke-dasharray="6 5"/>';
+
+  /* cono 1 */
+  for(var k=4;k>=1;k--){var f=k/4,op=(0.20-f*0.13).toFixed(3);html+='<polygon points="'+tX1+','+tY1+' '+(tX1+(lgX1-tX1)*f)+','+(tY1+(gY-tY1)*f)+' '+(tX1+(rgX1-tX1)*f)+','+(tY1+(gY-tY1)*f)+'" fill="rgba(255,220,80,'+op+')" stroke="none"/>';}
+  html += '<polygon points="'+tX1+','+tY1+' '+lgX1+','+gY+' '+rgX1+','+gY+'" fill="rgba(255,220,80,0.06)" stroke="rgba(255,220,80,0.7)" stroke-width="1.2" stroke-linejoin="round"/>';
+  html += '<ellipse cx="'+((lgX1+rgX1)/2)+'" cy="'+gY+'" rx="'+Math.abs(rgX1-lgX1)/2+'" ry="5" fill="rgba(255,220,80,0.3)"/>';
+  /* palo 1 */
+  html += '<line x1="'+bX1+'" y1="'+gY+'" x2="'+tX1+'" y2="'+tY1+'" stroke="#999" stroke-width="5" stroke-linecap="round"/>';
+  html += '<rect x="'+(bX1-8)+'" y="'+(gY-spH)+'" width="16" height="'+spH+'" rx="2" fill="#888"/>';
+  html += '<rect x="'+(tX1-15)+'" y="'+(tY1-4)+'" width="30" height="9" rx="2" fill="#ffd700"/>';
+  html += '<line x1="'+bX1+'" y1="'+(gY-spH-2)+'" x2="'+bX1+'" y2="'+tY1+'" stroke="rgba(255,255,255,0.1)" stroke-width="0.8" stroke-dasharray="3 3"/>';
+  html += '<text x="'+(bX1-22)+'" y="'+((gY+tY1)/2+4)+'" fill="rgba(255,255,255,0.4)" font-size="9" font-family="sans-serif" text-anchor="middle">'+p.H+'m</text>';
+
+  /* palo 2 se entrambi */
+  if(p.side==='both'){
+    var bX2=sw2L+sw_px/2, tX2=bX2-Math.sin(tR)*pH, tY2=gY-pH;
+    var ax2=Math.PI/2-tR, lgX2=tX2+(gY-tY2)/Math.tan(ax2-half), rgX2=tX2+(gY-tY2)/Math.tan(ax2+half);
+    for(var k=4;k>=1;k--){var f=k/4,op=(0.20-f*0.13).toFixed(3);html+='<polygon points="'+tX2+','+tY2+' '+(tX2+(lgX2-tX2)*f)+','+(tY2+(gY-tY2)*f)+' '+(tX2+(rgX2-tX2)*f)+','+(tY2+(gY-tY2)*f)+'" fill="rgba(255,220,80,'+op+')" stroke="none"/>';}
+    html += '<polygon points="'+tX2+','+tY2+' '+lgX2+','+gY+' '+rgX2+','+gY+'" fill="rgba(255,220,80,0.06)" stroke="rgba(255,220,80,0.7)" stroke-width="1.2" stroke-linejoin="round"/>';
+    html += '<line x1="'+bX2+'" y1="'+gY+'" x2="'+tX2+'" y2="'+tY2+'" stroke="#999" stroke-width="5" stroke-linecap="round"/>';
+    html += '<rect x="'+(bX2-8)+'" y="'+(gY-spH)+'" width="16" height="'+spH+'" rx="2" fill="#888"/>';
+    html += '<rect x="'+(tX2-15)+'" y="'+(tY2-4)+'" width="30" height="9" rx="2" fill="#ffd700"/>';
+  }
+
+  /* etichette */
+  html += '<text x="'+(sw1L+sw_px/2)+'" y="'+(gY-spH+14)+'" fill="rgba(255,255,255,0.55)" font-size="9" font-family="sans-serif" text-anchor="middle">marciapiede '+p.sw+'m</text>';
+  html += '<text x="'+(rdL+rw_px/2)+'"  y="'+(gY-spH+14)+'" fill="rgba(255,255,255,0.4)"  font-size="10" font-family="sans-serif" text-anchor="middle">strada '+p.rw+'m</text>';
+  html += '<text x="'+midX+'" y="'+(CH-8)+'" fill="rgba(255,255,0,0.4)" font-size="9" font-family="sans-serif" text-anchor="middle">mezzaria</text>';
+  if(p.side==='both') html += '<text x="'+(sw2L+sw_px/2)+'" y="'+(gY-spH+14)+'" fill="rgba(255,255,255,0.55)" font-size="9" font-family="sans-serif" text-anchor="middle">marciapiede '+p.sw+'m</text>';
+
+  /* quota cono */
+  var mY=gY+20;
+  html += '<line x1="'+lgX1+'" y1="'+mY+'" x2="'+rgX1+'" y2="'+mY+'" stroke="rgba(255,220,80,0.6)" stroke-width="1"/>';
+  html += '<line x1="'+lgX1+'" y1="'+(mY-4)+'" x2="'+lgX1+'" y2="'+(mY+4)+'" stroke="rgba(255,220,80,0.6)" stroke-width="1"/>';
+  html += '<line x1="'+rgX1+'" y1="'+(mY-4)+'" x2="'+rgX1+'" y2="'+(mY+4)+'" stroke="rgba(255,220,80,0.6)" stroke-width="1"/>';
+  html += '<text x="'+((lgX1+rgX1)/2)+'" y="'+(mY+13)+'" fill="rgba(255,220,80,0.8)" font-size="9" font-family="sans-serif" text-anchor="middle">Ø '+p.rDraw.toFixed(1)+'m efficace</text>';
+
+  document.getElementById('SF').innerHTML = html;
+  document.getElementById('PLBL').textContent = '— P'+(SEL+1);
+}
+
+/* ── DRAW ────────────────────────────────────────────── */
+function DRAW(){
+  var p = CALC();
+  drawLateral(p);
+  drawTop(p);
+  drawFront(p);
+}
+
+/* ── EMAIL ───────────────────────────────────────────── */
+function EMAIL(){
+  var via = document.getElementById('via').value||'—';
+  var b = 'SIMULATORE ILLUMINOTECNICO — Salvatore Siciliano\n\nVia: '+via+'\n\n';
+  b += 'PARAMETRI\n';
+  b += 'Altezza palo: '+v('H',8)+' m\nPotenza: '+v('W',100)+' W\nAngolo fascio: '+v('ANG',60)+'°\n';
+  b += 'Efficienza: '+v('LMW',100)+' lm/W\nSoglia: '+v('MINLUX',10)+' lx\n';
+  b += 'Lunghezza tratto: '+v('LEN',80)+' m\nMarciapiede: '+v('SW',2.5)+' m\nStrada: '+v('RW',7)+' m\nPendenza: '+v('SLOPE',0)+'%\n\n';
+  b += 'RISULTATI\n';
+  b += 'N° pali: '+document.getElementById('O_N').textContent+'\n';
+  b += 'Distanza tra pali: '+document.getElementById('O_D').textContent+'\n';
+  b += 'Raggio efficace: '+document.getElementById('O_R').textContent+'\n';
+  b += 'Copertura marciapiede: '+document.getElementById('O_C').textContent+'\n';
+  b += 'Illuminamento: '+document.getElementById('O_E').textContent+'\n';
+  b += 'Potenza totale: '+document.getElementById('O_P').textContent+'\n';
+  window.location.href='mailto:?subject='+encodeURIComponent('Progetto illuminazione — '+via)+'&body='+encodeURIComponent(b);
+}
+
+DRAW();
+</script>
+</body>
+</html>
