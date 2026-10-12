@@ -1,0 +1,7 @@
+Questa cartella NON fa parte dell'app.
+Contiene i file da pubblicare in un repository separato chiamato  salvatore2026.github.io
+(GitHub Pages alla radice del dominio), così che
+  https://salvatore2026.github.io/.well-known/assetlinks.json
+risponda. Senza quel file l'app SimLuce installata da Google Play si apre
+con la barra dell'indirizzo del browser invece che a schermo intero.
+Le impronte SHA-256 sono quelle della Play Console (chiave di firma dell'app e chiave di caricamento).

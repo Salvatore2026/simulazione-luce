@@ -1,0 +1,11 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.salvatore.simluce",
+    "sha256_cert_fingerprints": [
+      "F8:73:9E:1B:F2:68:50:9D:0B:8B:4D:94:C6:A9:8E:26:DA:38:EB:A4:40:60:11:87:A3:99:D1:60:4D:E3:0D:6E",
+      "6E:81:66:EC:B4:B6:D7:42:50:87:AA:B9:5D:5D:47:D0:00:7D:9B:EE:75:64:E7:FA:62:FB:7D:A8:84:2A:8E:5E"
+    ]
+  }
+}]
