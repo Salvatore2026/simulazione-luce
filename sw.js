@@ -2,7 +2,7 @@
    Strategia: prima la rete, la cache solo come riserva quando si è offline.
    Così ogni aggiornamento pubblicato arriva subito a chi ha già l'app.
    CACHE va cambiata a ogni pubblicazione. */
-var CACHE = 'simluce-v3';
+var CACHE = 'simluce-v4';
 var FILES = [
   './',
   './index.html',
@@ -33,7 +33,10 @@ self.addEventListener('fetch', function (e) {
   var url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;
   e.respondWith(
-    fetch(e.request).then(function (res) {
+    (e.request.mode === 'navigate'
+      ? fetch(e.request.url, { cache: 'no-cache', credentials: 'same-origin' })
+      : fetch(e.request)
+    ).then(function (res) {
       if (res && res.ok) {
         var copy = res.clone();
         caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
