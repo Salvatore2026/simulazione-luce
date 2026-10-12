@@ -120,14 +120,14 @@ svg{display:block;border-radius:6px;overflow:hidden;width:100%;height:auto;backg
 <div class="box hidden" id="PRIVATE_CARD">
   <div class="ct">Illuminazione privata — area e punti luce</div>
   <div class="grid g4">
-    <div class="fl"><label for="PTYPE">Tipo di luce</label><select id="PTYPE" onchange="PRESET();DRAW()"><option value="applique">Applique a parete</option><option value="faro">Faretto direzionale a parete</option><option value="palo">Paletto / lampioncino</option><option value="plafoniera">Plafoniera a soffitto</option></select></div>
+    <div class="fl"><label for="PTYPE">Tipo di luce</label><select id="PTYPE" onchange="PRESET();DRAW()"><option value="applique">Applique a parete</option><option value="faro">Faretto a parete</option><option value="palo">Paletto / lampioncino</option><option value="plafoniera">Plafoniera a soffitto</option></select></div>
     <div class="fl"><label for="PH">Altezza della luce da terra (m)</label><input type="number" id="PH" value="3" min="0.5" max="15" step="0.5" oninput="DRAW()"></div>
     <div class="fl"><label for="PW">Potenza per punto luce (W)</label><input type="number" id="PW" value="30" min="1" max="1000" step="1" oninput="DRAW()"></div>
     <div class="fl"><label for="PN">Numero di punti luce</label><input type="number" id="PN" value="2" min="1" max="40" step="1" oninput="DRAW()"><span class="hint">Distribuiti in fila lungo l'area.</span></div>
   </div>
   <div class="grid g4">
     <div class="fl"><label for="PANG">Angolo del fascio (°)</label><input type="number" id="PANG" value="100" min="10" max="150" step="5" oninput="DRAW()"><span class="hint">Faretto 30–60°, applique 90–120°, plafoniera 120°.</span></div>
-    <div class="fl"><label for="PTILT">Inclinazione verso l'area (°)</label><input type="number" id="PTILT" value="20" min="-30" max="60" step="5" oninput="DRAW()"><span class="hint">0 = dritta in basso. Positivo = verso l'area.</span></div>
+    <div class="fl"><label for="PTILT">Inclinazione verso l'area (°)</label><input type="number" id="PTILT" value="20" min="-30" max="60" step="5" oninput="DRAW()"><span class="hint">0 = dritta in basso. Positivo = verso l'area. A muro non può essere negativa.</span></div>
     <div class="fl"><label for="PLMW">Efficienza (lm/W)</label><input type="number" id="PLMW" value="100" min="30" max="250" step="5" oninput="DRAW()"><span class="hint">Lumen per watt. LED moderni: 100–150.</span></div>
     <div class="fl"><label for="PMF">Fattore di manutenzione</label><input type="number" id="PMF" value="0.8" min="0.3" max="1" step="0.05" oninput="DRAW()"><span class="hint">Sporco e invecchiamento. Progetto: 0,8.</span></div>
   </div>
@@ -139,7 +139,7 @@ svg{display:block;border-radius:6px;overflow:hidden;width:100%;height:auto;backg
     <div class="fl"><label for="PMINLUX">Soglia di luce sufficiente (lux)</label><input type="number" id="PMINLUX" value="10" min="1" max="500" step="1" oninput="DRAW()"><span class="hint">Vialetto 5–10, ingresso 20–50, garage 100.</span></div>
   </div>
   <div class="grid g3">
-    <div class="fl"><label for="PRHO">Ambiente</label><select id="PRHO" onchange="DRAW()"><option value="0">All'aperto (nessuna riflessione)</option><option value="0.5">Al chiuso, pareti chiare</option><option value="0.2">Al chiuso, pareti scure</option></select><span class="hint">Al chiuso, la luce che colpisce pareti e soffitto torna in parte a terra.</span></div>
+    <div class="fl"><label for="PRHO">Ambiente</label><select id="PRHO" onchange="DRAW()"><option value="0">All'aperto (nessuna riflessione)</option><option value="0.6">Al chiuso, pareti e soffitto chiari</option><option value="0.25">Al chiuso, pareti scure</option></select><span class="hint">Al chiuso, la luce che colpisce pareti e soffitto torna in parte a terra.</span></div>
     <div class="fl"><label for="PHOURS">Ore di accensione al giorno</label><input type="number" id="PHOURS" value="6" min="0" max="24" step="0.5" oninput="DRAW()"></div>
     <div class="fl"><label for="PCOST">Costo energia (€/kWh)</label><input type="number" id="PCOST" value="0.30" min="0" max="2" step="0.01" oninput="DRAW()"></div>
   </div>
@@ -148,13 +148,13 @@ svg{display:block;border-radius:6px;overflow:hidden;width:100%;height:auto;backg
 
 <div class="box">
   <div class="ct">Risultati</div>
-  <div id="WARN" class="warn"></div>
+  <div id="WARN" class="warn" aria-live="polite"></div>
   <div class="mrow" id="METRICS"></div>
 </div>
 
-<div class="box"><div class="ct" id="L_TITLE">Vista laterale</div><svg id="SL" viewBox="0 0 900 260"></svg><div class="cap" id="L_CAP"></div></div>
-<div class="box"><div class="ct" id="T_TITLE">Vista dall'alto — mappa dei lux</div><svg id="ST" viewBox="0 0 900 340"></svg><div class="cap" id="T_CAP"></div></div>
-<div class="box"><div class="ct" id="F_TITLE">Sezione</div><svg id="SF" viewBox="0 0 900 300"></svg><div class="cap" id="F_CAP"></div></div>
+<div class="box"><div class="ct" id="L_TITLE">Vista laterale</div><svg id="SL" viewBox="0 0 900 260" role="img" aria-label="Vista laterale"></svg><div class="cap" id="L_CAP"></div></div>
+<div class="box"><div class="ct" id="T_TITLE">Vista dall'alto — mappa dei lux</div><svg id="ST" viewBox="0 0 900 340" role="img" aria-label="Mappa dei lux vista dall'alto"></svg><div class="cap" id="T_CAP"></div></div>
+<div class="box"><div class="ct" id="F_TITLE">Sezione</div><svg id="SF" viewBox="0 0 900 300" role="img" aria-label="Sezione"></svg><div class="cap" id="F_CAP"></div></div>
 
 <div class="pbar">
 <button class="pbtn" onclick="window.print()">Stampa / salva PDF</button>
@@ -225,6 +225,7 @@ function reach(L,emin){
   if(!any){near=0;far=0;lat=0}
   return {near:near,far:far,lat:lat,any:any,e0:lumE(L,L.x,L.y),R:R};
 }
+function pct(grid,q){var n=Math.min(grid.length,6000),step=grid.length/n,a=new Array(n);for(var i=0;i<n;i++)a[i]=grid[Math.floor(i*step)];a.sort(function(x,y){return x-y});return a[Math.min(n-1,Math.floor(q*n))]||0}
 function stats(vals){var n=vals.length;if(!n)return {avg:0,min:0,max:0};var s=0,mn=Infinity,mx=-Infinity;for(var i=0;i<n;i++){s+=vals[i];if(vals[i]<mn)mn=vals[i];if(vals[i]>mx)mx=vals[i]}return {avg:s/n,min:mn,max:mx}}
 
 function CALCPUBLIC(p){
@@ -245,24 +246,24 @@ function CALCPUBLIC(p){
     if(two){var y2=y;if(p.side==='stagger'){y=dist/4+i*dist;y2=y+dist/2;lums[lums.length-1].y=y;poles[poles.length-1].y=y}
       lums.push(makeLum({x:xr,y:y2,H:p.H,W:p.W,lmw:p.lmw,mf:p.mf,ang:p.ang,tilt:p.tilt,ux:-1,uy:0}));poles.push({x:xr,y:y2,row:1})}
   }
-  var xmin=c-p.sw, xmax=two?xr+p.sw:c+p.rw;
+  var xmin=c-p.sw, xmax=two?xr-c+p.sw:c+p.rw;
   var xr0=xmax-xmin;
-  var cx=Math.max(xr0/40,0.1),cy=Math.max(p.len/240,cx);
+  var cx=Math.max(xr0/36,0.1),nxp=Math.ceil(xr0/cx),cy=Math.max(Math.min(p.len/240,dist/12),p.len*nxp/50000,0.05);   // celle fini quanto basta per vedere il buio tra due pali, mai più di 50.000
   var nx=Math.ceil(xr0/cx),ny=Math.ceil(p.len/cy);
   var grid=new Float32Array(nx*ny),sw1=[],road=[],sw2=[],emax=0;
   for(var j=0;j<ny;j++){var yy=(j+.5)*cy;for(var i2=0;i2<nx;i2++){var xx=xmin+(i2+.5)*cx;var e=fieldE(lums,xx,yy);grid[j*nx+i2]=e;if(e>emax)emax=e;
     if(xx<c)sw1.push(e);else if(xx<c+p.rw)road.push(e);else sw2.push(e)}}
   var allsw=sw1.concat(sw2);
-  var ssw=stats(allsw),sro=stats(road);
+  var ssw=stats(allsw),sro=stats(road),e90=pct(grid,0.9);
   var covSw=allsw.length?allsw.filter(function(e){return e>=p.minlx}).length/allsw.length*100:0;
   var covRo=road.length?road.filter(function(e){return e>=p.minlx}).length/road.length*100:0;
   var points=lums.length,totalW=points*p.W,kwhDay=totalW*p.hours/1000,month=kwhDay*30*p.cost,year=kwhDay*365*p.cost;
   // curva lungo il marciapiede (x = metà marciapiede del lato dei pali) e sezione sul primo palo
-  var xs=c-p.sw/2, curveY=[];for(var j2=0;j2<=200;j2++){var yq=p.len*j2/200;curveY.push(fieldE(lums,xs,yq))}
+  var xs=c-p.sw/2, curveY=[],NY=Math.min(4000,Math.max(200,Math.ceil(p.len/(dist/10))));for(var j2=0;j2<=NY;j2++){var yq=p.len*j2/NY;curveY.push(fieldE(lums,xs,yq))}
   var curveX=[];for(var i3=0;i3<=120;i3++){var xq=xmin+xr0*i3/120;curveX.push(fieldE(lums,xq,poles[0].y))}
   var sky=L0.sky*100;
   return {mode:'public',p:p,c:c,xr:xr,two:two,lums:lums,poles:poles,n:n,dist:dist,lat:lat,far:rc.far,near:rc.near,e0:rc.e0,weak:weak,sky:sky,
-    xmin:xmin,xmax:xmax,nx:nx,ny:ny,grid:grid,emax:emax,ssw:ssw,sro:sro,covSw:covSw,covRo:covRo,
+    xmin:xmin,xmax:xmax,nx:nx,ny:ny,grid:grid,emax:emax,e90:e90,ssw:ssw,sro:sro,covSw:covSw,covRo:covRo,
     points:points,totalW:totalW,kwhDay:kwhDay,month:month,year:year,curveY:curveY,curveX:curveX,xs:xs,skyLoss:sky>5,
     uni:ssw.avg>0?ssw.min/ssw.avg:0};
 }
@@ -297,7 +298,7 @@ function CALCPRIVATE(p){
      Quota riflessa = rho · (flusso totale − flusso diretto nell'area) · f / (1 − rho·(1−f)),
      con f = area / (area + pareti): è la parte di luce diffusa che ricade sul pavimento, rimbalzi compresi. */
   var rho=p.rho||0,eref=0;
-  if(rho>0){var area=p.len*p.wid,walls=2*(p.len+p.wid)*p.H,f=area/(area+walls);
+  if(rho>0){var area=p.len*p.wid,hw=Math.max(p.H,2.7),walls=2*(p.len+p.wid)*hw,f=area/(area+walls+area);   // pavimento, pareti (alte almeno 2,7 m) e soffitto
     var fl=rho*(fluxTot-inA)*f/(1-rho*(1-f));eref=fl/area;
     for(var g=0;g<grid.length;g++)grid[g]+=eref;for(var g2=0;g2<vals.length;g2++)vals[g2]+=eref;
     st=stats(vals);emax+=eref;cover=vals.filter(function(e){return e>=p.minlx}).length/vals.length*100}
@@ -306,7 +307,7 @@ function CALCPRIVATE(p){
   var curveX=[];for(var i3=0;i3<=200;i3++){curveX.push(fieldE(lums,p.len*i3/200,Math.min(p.wid,Math.max(off,0.001)+(cfg.wall?p.wid/2:0)))+eref)}
   var skyLoss=(sky>5);
   return {mode:'private',p:p,cfg:cfg,off:off,lums:lums,fix:fix,near:rc.near,far:rc.far,lat:rc.lat,e0:rc.e0+eref,eref:eref,rho:rho,
-    nx:nx,ny:ny,grid:grid,emax:emax,st:st,cover:cover,outside:outside,sky:sky,
+    nx:nx,ny:ny,grid:grid,emax:emax,e90:pct(grid,0.9),st:st,cover:cover,outside:outside,sky:sky,
     points:points,totalW:totalW,kwhDay:kwhDay,month:month,year:year,curveY:curveY,curveX:curveX,skyLoss:skyLoss,
     uni:st.avg>0?st.min/st.avg:0,area:p.len*p.wid};
 }
@@ -322,9 +323,9 @@ function v(id,def){var e=el(id);if(!e)return def;var n=parseFloat(String(e.value
 function s(id,def){var e=el(id);return e?e.value:def}
 function readPublic(){return {H:v('H',8),W:v('W',100),ang:v('ANG',120),tilt:v('TILT',10),lmw:v('LMW',120),mf:v('MF',0.8),minlx:v('MINLUX',10),ovlp:v('OVLP',20),len:v('LEN',80),sw:v('SW',2.5),rw:v('RW',7),side:s('SIDE','left'),slope:v('SLOPE',0),hours:v('HOURS',10),cost:v('COST',0.30)}}
 function readPrivate(){return {type:s('PTYPE','applique'),H:v('PH',3),W:v('PW',30),n:Math.max(1,Math.round(v('PN',1))),ang:v('PANG',100),tilt:v('PTILT',20),lmw:v('PLMW',100),mf:v('PMF',0.8),len:v('PLEN',10),wid:v('PWID',6),off:v('POFF',3),minlx:v('PMINLUX',10),rho:parseFloat(s('PRHO','0'))||0,hours:v('PHOURS',6),cost:v('PCOST',0.30)}}
-function PRESET(){var t=s('PTYPE','applique');var cfg=privateCfg(t);el('POFF').disabled=cfg.wall;
-  if(t==='faro'){el('PANG').value=40;el('PTILT').value=35}
-  else if(t==='applique'){el('PANG').value=100;el('PTILT').value=20}
+function PRESET(){var t=s('PTYPE','applique');var cfg=privateCfg(t);el('POFF').disabled=cfg.wall;el('PTILT').min=cfg.wall?0:-30;
+  if(t==='faro'){el('PANG').value=40;el('PTILT').value=35;el('PH').value=3}
+  else if(t==='applique'){el('PANG').value=100;el('PTILT').value=20;el('PH').value=2.5}
   else if(t==='palo'){el('PANG').value=130;el('PTILT').value=0;el('PH').value=1}
   else {el('PANG').value=120;el('PTILT').value=0;el('PH').value=3}}
 function SETMODE(m){MODE=m;el('BTN_PUBLIC').classList.toggle('active',m==='public');el('BTN_PRIVATE').classList.toggle('active',m==='private');el('BTN_PUBLIC').setAttribute('aria-pressed',m==='public');el('BTN_PRIVATE').setAttribute('aria-pressed',m==='private');el('PUBLIC_CARD').classList.toggle('hidden',m!=='public');el('PRIVATE_CARD').classList.toggle('hidden',m!=='private');el('SUBTITLE').textContent=(m==='public')?'Illuminazione pubblica — strade, pali, distanze e consumi':'Illuminazione privata — cortili, ingressi, piazzali, giardini e consumi';DRAW()}
@@ -381,8 +382,8 @@ function drawMetrics(r){var h='',warn='',ok=false,p=r.p;MLIST=[];
 
 /* ---- disegni ---- */
 var F='font-family="system-ui,sans-serif"';
-function txt(x,y,t,size,fill,anchor){return '<text x="'+x+'" y="'+y+'" '+F+' font-size="'+(size||24)+'" fill="'+(fill||'#fff')+'" text-anchor="'+(anchor||'middle')+'" stroke="#13202e" stroke-width="6" paint-order="stroke" stroke-linejoin="round">'+t+'</text>'}
-function heatTop(emin,emax){return Math.max(2.5*emin,0.85*emax)}
+function txt(x,y,t,size,fill,anchor){return '<text x="'+x+'" y="'+y+'" '+F+' font-size="'+(size||28)+'" fill="'+(fill||'#fff')+'" text-anchor="'+(anchor||'middle')+'" stroke="#13202e" stroke-width="6" paint-order="stroke" stroke-linejoin="round">'+t+'</text>'}
+function heatTop(emin,e90){return Math.max(2.5*emin,e90)}
 function heatColor(e,emin,emax){var r,g,b,f;
   if(e<emin){f=Math.sqrt(clamp(e/emin,0,1));r=19+f*55;g=32+f*58;b=46+f*62}
   else{f=clamp((e-emin)/(heatTop(emin,emax)-emin),0,1);r=150+f*105;g=118+f*117;b=40+f*110}
@@ -399,7 +400,7 @@ function legend(emin,emax){var top=heatTop(emin,emax);return '<span class="legen
 function curve(vals,x0,x1,yBase,hMax,emin,base){var mx=0;for(var i=0;i<vals.length;i++)if(vals[i]>mx)mx=vals[i];var top=Math.max(mx,emin*1.5);var pts='',tp='',n=vals.length-1;
   for(var j=0;j<=n;j++){var x=x0+(x1-x0)*j/n,off=base?base(j/n):0;pts+=x+','+(yBase+off-hMax*vals[j]/top)+' ';tp+=x+','+(yBase+off-hMax*emin/top)+' '}
   var yT=yBase-hMax*emin/top;
-  return '<polyline points="'+tp+'" fill="none" stroke="#ffb347" stroke-width="2" stroke-dasharray="10 7"/>'+txt(x0+6,yT-8,'soglia '+fmt(emin,0)+' lx',24,'#ffb347','start')+'<polyline points="'+pts+'" fill="none" stroke="#ffe680" stroke-width="3"/>'}
+  return '<polyline points="'+tp+'" fill="none" stroke="#ffb347" stroke-width="2" stroke-dasharray="10 7"/>'+txt(x0+6,yT-8,'soglia '+fmt(emin,0)+' lx',28,'#ffb347','start')+'<polyline points="'+pts+'" fill="none" stroke="#ffe680" stroke-width="3"/>'}
 function polePx(x,yG,topX,topY){return '<line x1="'+x+'" y1="'+yG+'" x2="'+topX+'" y2="'+topY+'" stroke="#c8c8c8" stroke-width="5" stroke-linecap="round"/><rect x="'+(topX-14)+'" y="'+(topY-5)+'" width="28" height="10" rx="3" fill="#ffd700"/>'}
 function cone(topX,topY,xA,xB,yG,a){return '<polygon points="'+topX+','+topY+' '+xA+','+yG+' '+xB+','+yG+'" fill="rgba(255,220,80,'+a+')" stroke="rgba(255,220,80,.7)" stroke-width="1.5"/>'}
 
@@ -409,30 +410,30 @@ function pubSide(r){var p=r.p;el('L_TITLE').textContent='Vista laterale — prof
   var html='<rect width="900" height="260" fill="#13202e"/>';
   html+='<polygon points="'+mL+','+gY+' '+(W-mR)+','+gy(p.len)+' '+(W-mR)+','+H+' '+mL+','+H+'" fill="#4e5a4a"/>';
   html+='<polygon points="'+mL+','+gY+' '+(W-mR)+','+gy(p.len)+' '+(W-mR)+','+(gy(p.len)+18)+' '+mL+','+(gY+18)+'" fill="#8a8a7a"/>';
-  var k=0;for(var i=0;i<r.poles.length;i++){var pl=r.poles[i];if(pl.row!==0)continue;k++;var x=mL+pl.y*sc,g=gy(pl.y),ty=g-p.H*scY;
-    html+=cone(x,ty,x-r.lat*sc,x+r.lat*sc,g,.22)+polePx(x,g,x,ty)+txt(x,H-6,'P'+k,32,'rgba(255,255,255,.85)')}
+  var k=0,every=Math.ceil(r.n/12);for(var i=0;i<r.poles.length;i++){var pl=r.poles[i];if(pl.row!==0)continue;k++;var x=mL+pl.y*sc,g=gy(pl.y),ty=g-p.H*scY;
+    html+=(r.n<=40?cone(x,ty,x-r.lat*sc,x+r.lat*sc,g,.22):'')+polePx(x,g,x,ty)+((k-1)%every===0?txt(x,H-6,'P'+k,32,'rgba(255,255,255,.85)'):'')}
   html+=curve(r.curveY,mL,W-mR,gY-6,100,p.minlx,function(f){return gy(f*p.len)-gY});
-  if(p.slope)html+=txt(W-mR,30,'pendenza '+fmt(p.slope,0)+'% · dislivello '+fmt(p.len*p.slope/100,1)+' m',24,'rgba(255,180,80,.9)','end');
+  if(p.slope)html+=txt(W-mR,30,'pendenza '+fmt(p.slope,0)+'% · dislivello '+fmt(p.len*p.slope/100,1)+' m',28,'rgba(255,180,80,.9)','end');
   el('SL').innerHTML=html;
-  el('L_CAP').innerHTML='Linea gialla: lux lungo la metà del marciapiede, da un capo all\'altro del tratto ('+fmt(p.len,0)+' m). Minimo '+fmt(r.ssw.min,0)+' lx, medio '+fmt(r.ssw.avg,0)+' lx. Triangoli (schematici): portata di ogni palo lungo la strada ('+fmt(r.lat,1)+' m per lato).'}
+  el('L_CAP').innerHTML='Linea gialla: lux lungo la metà del marciapiede, da un capo all\'altro del tratto ('+fmt(p.len,0)+' m). Minimo '+fmt(r.ssw.min,0)+' lx, medio '+fmt(r.ssw.avg,0)+' lx.'+(r.lat?' Triangoli (schematici): portata di ogni palo lungo la strada ('+fmt(r.lat,1)+' m per lato).':' Nessun palo da solo supera la soglia: contano solo i pali sommati.')}
 
 function pubTop(r){var p=r.p;el('T_TITLE').textContent='Vista dall\'alto — mappa dei lux sul tratto';
   var W=900,H=340,mL=150,mR=20,mT=40,mB=50,aw=W-mL-mR,ah=H-mT-mB;
-  var sx=aw/p.len,span=r.xmax-r.xmin,sy=Math.min(ah/span,3*sx);var ah2=span*sy,aw2=aw;mT=(H-mB-mT-ah2)/2+mT;
+  var sx=aw/p.len,span=r.xmax-r.xmin,sy=Math.min(ah/span,Math.max(3*sx,130/span));var ah2=span*sy,aw2=aw;mT=(H-mB-mT-ah2)/2+mT;
   function Y(x){return mT+(x-r.xmin)*sy}
   var html='<rect width="900" height="340" fill="#13202e"/>';
-  html+='<image x="'+mL+'" y="'+mT+'" width="'+aw2+'" height="'+ah2+'" preserveAspectRatio="none" style="image-rendering:pixelated" href="'+heatImage(r.grid,r.nx,r.ny,p.minlx,r.emax,true)+'"/>';
+  html+='<image x="'+mL+'" y="'+mT+'" width="'+aw2+'" height="'+ah2+'" preserveAspectRatio="none" style="image-rendering:pixelated" href="'+heatImage(r.grid,r.nx,r.ny,p.minlx,r.e90,true)+'"/>';
   // contorni marciapiede/strada
   html+='<rect x="'+mL+'" y="'+Y(r.c)+'" width="'+aw2+'" height="'+(p.rw*sy)+'" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.5"/>';
   html+='<line x1="'+mL+'" y1="'+Y(r.c+p.rw/2)+'" x2="'+(mL+aw2)+'" y2="'+Y(r.c+p.rw/2)+'" stroke="rgba(255,255,255,.35)" stroke-width="2" stroke-dasharray="18 12"/>';
-  html+=txt(mL-10,Y((r.xmin+r.c)/2)+10,'marciapiede',22,'rgba(255,255,255,.9)','end')+txt(mL-10,Y(r.c+p.rw/2)+10,'strada',22,'rgba(255,255,255,.9)','end');
-  if(r.two)html+=txt(mL-10,Y((r.xr+r.xmax)/2)+10,'marciapiede',22,'rgba(255,255,255,.9)','end');
-  var k=0;for(var i=0;i<r.poles.length;i++){var pl=r.poles[i];var x=mL+pl.y*sx,y=Y(pl.x);
+  html+=txt(mL-10,Y((r.xmin+r.c)/2)+10,'marciapiede',26,'rgba(255,255,255,.9)','end')+txt(mL-10,Y(r.c+p.rw/2)+10,'strada',26,'rgba(255,255,255,.9)','end');
+  if(r.two)html+=txt(mL-10,Y((r.xr-r.c+r.xmax)/2)+10,'marciapiede',26,'rgba(255,255,255,.9)','end');
+  var k=0,every=Math.ceil(r.n/12);for(var i=0;i<r.poles.length;i++){var pl=r.poles[i];var x=mL+pl.y*sx,y=Y(pl.x);
     html+='<circle cx="'+x+'" cy="'+y+'" r="7" fill="#fff" stroke="#000" stroke-width="1.5"/>';
-    if(pl.row===0){k++;html+=txt(x,mT+ah2+26,'P'+k,24,'rgba(255,255,255,.9)')}}
-  html+=txt(mL,H-8,'0 m',22,'rgba(255,255,255,.7)','start')+txt(mL+aw2,H-8,fmt(p.len,0)+' m',22,'rgba(255,255,255,.7)','end');
+    if(pl.row===0){k++;if((k-1)%every===0)html+=txt(x,mT+ah2+26,'P'+k,24,'rgba(255,255,255,.9)')}}
+  html+=txt(mL,H-8,'0 m',26,'rgba(255,255,255,.7)','start')+txt(mL+aw2,H-8,fmt(p.len,0)+' m',26,'rgba(255,255,255,.7)','end');
   el('ST').innerHTML=html;
-  el('T_CAP').innerHTML=legend(p.minlx,r.emax)+'<br>'+r.n+(r.two?' + '+r.n:'')+' pali a passo di '+fmt(r.dist,1)+' m. Marciapiede sopra soglia: '+fmt(r.covSw,0)+'% · strada: '+fmt(r.covRo,0)+'%.'}
+  el('T_CAP').innerHTML=legend(p.minlx,r.e90)+'<br>'+r.n+(r.two?' + '+r.n:'')+' pali a passo di '+fmt(r.dist,1)+' m. Marciapiede sopra soglia: '+fmt(r.covSw,0)+'% · strada: '+fmt(r.covRo,0)+'%.'}
 
 function pubFront(r){var p=r.p;el('F_TITLE').textContent='Sezione trasversale — sul primo palo';
   var W=900,H=300,gY=230,mL=40,mR=20;var span=r.xmax-r.xmin;var sc=Math.min((W-mL-mR)/span,40);var x0=450-span*sc/2;
@@ -441,16 +442,16 @@ function pubFront(r){var p=r.p;el('F_TITLE').textContent='Sezione trasversale �
   var html='<rect width="900" height="300" fill="#1a2a3a"/><rect y="'+gY+'" width="900" height="'+(H-gY)+'" fill="#4e5a4a"/>';
   html+='<rect x="'+X(r.c)+'" y="'+(gY-10)+'" width="'+(p.rw*sc)+'" height="10" fill="#2b2b28"/>';
   html+='<rect x="'+X(r.xmin)+'" y="'+(gY-14)+'" width="'+(p.sw*sc)+'" height="14" fill="#9a9a8a"/>';
-  if(r.two)html+='<rect x="'+X(r.xr)+'" y="'+(gY-14)+'" width="'+(p.sw*sc)+'" height="14" fill="#9a9a8a"/>';
-  var t=deg(p.tilt),half=deg(p.ang)/2,ty=gY-pH,scH=pH/p.H;
+  if(r.two)html+='<rect x="'+X(r.xr-r.c)+'" y="'+(gY-14)+'" width="'+(p.sw*sc)+'" height="14" fill="#9a9a8a"/>';
+  var t=deg(p.tilt),half=deg(p.ang)/2,ty=gY-pH;
   function edge(a){return (Math.abs(a)>=deg(85))?(a>0?1:-1)*60:Math.tan(a)*p.H}
   function beam(px,dir){var e1=px+dir*edge(t-half)*scH,e2=px+dir*edge(t+half)*scH;return '<polygon points="'+px+','+ty+' '+e1+','+gY+' '+e2+','+gY+'" fill="rgba(255,220,80,.08)" stroke="rgba(255,220,80,.35)" stroke-dasharray="6 5"/>'}
   html+=beam(X(0),1)+cone(X(0),ty,X(r.near),X(r.far),gY,.22)+polePx(X(0),gY,X(0),ty);
-  if(r.two)html+=beam(X(r.xr),-1)+cone(X(r.xr),ty,X(r.xr-r.far),X(r.xr-r.near),gY,.22)+polePx(X(r.xr),gY,X(r.xr),ty);
+  if(p.side==='both')html+=beam(X(r.xr),-1)+cone(X(r.xr),ty,X(r.xr-r.far),X(r.xr-r.near),gY,.22)+polePx(X(r.xr),gY,X(r.xr),ty);
   html+=curve(r.curveX,X(r.xmin),X(r.xmax),gY-16,120,p.minlx);
-  html+=txt(X(r.xmin+p.sw/2),H-8,'marciapiede',24,'rgba(255,255,255,.75)')+txt(X(r.c+p.rw/2),H-8,'strada '+fmt(p.rw,1)+' m',24,'rgba(255,255,255,.75)');
+  html+=txt(X(r.xmin+p.sw/2),H-8,'marciapiede',28,'rgba(255,255,255,.75)')+txt(X(r.c+p.rw/2),H-8,'strada '+fmt(p.rw,1)+' m',28,'rgba(255,255,255,.75)');
   el('SF').innerHTML=html;
-  el('F_CAP').innerHTML='Linea gialla: lux a terra attraverso la strada, all\'altezza del primo palo. Triangolo pieno: zona sopra soglia'+(r.lat?' (fino a '+fmt(r.far,1)+' m dal palo verso la strada'+(r.far>=r.c+p.rw?', tutta la carreggiata)':', su '+fmt(p.rw,1)+' m di strada)'):' (nessuna)')+'. Tratteggio: bordo del fascio a metà intensità, palo alto '+fmt(p.H,1)+' m inclinato di '+fmt(p.tilt,0)+'°.'}
+  el('F_CAP').innerHTML='Linea gialla: lux a terra attraverso la strada, all\'altezza del primo palo. Triangolo pieno: zona sopra soglia'+(r.lat?' (fino a '+fmt(r.far,1)+' m dal palo verso la strada'+(r.far>=r.c+p.rw?', tutta la carreggiata)':', su '+fmt(p.rw,1)+' m di strada)'):' (nessuna)')+'. Tratteggio: bordo del fascio a metà intensità, palo alto '+fmt(p.H,1)+' m inclinato di '+fmt(p.tilt,0)+'°.'+(p.side==='stagger'?' I pali dell\'altro lato sono sfalsati di '+fmt(r.dist/2,1)+' m e non cadono in questa sezione.':'')}
 
 function prvSide(r){var p=r.p;el('L_TITLE').textContent='Vista laterale — sezione dal muro verso l\'area';
   var W=900,H=260,gY=200,mL=120,mR=30;var sc=Math.min((W-mL-mR)/p.wid,60);var x0=mL;
@@ -466,20 +467,20 @@ function prvSide(r){var p=r.p;el('L_TITLE').textContent='Vista laterale — sezi
   else if(r.cfg.ceiling)html+='<rect x="'+(fx-22)+'" y="'+(fy-4)+'" width="44" height="10" rx="5" fill="#ffd700"/>';
   else html+=polePx(fx,gY,fx,fy);
   html+=curve(r.curveY,X(0),X(p.wid),gY-10,110,p.minlx);
-  html+=txt(X(0)-30,gY-10,'muro',24,'rgba(255,255,255,.75)','end')+txt(X(p.wid),H-8,fmt(p.wid,1)+' m',24,'rgba(255,255,255,.7)','end')+txt(X(0),H-8,'0',24,'rgba(255,255,255,.7)','start');
+  html+=txt(X(0)-30,gY-10,'muro',28,'rgba(255,255,255,.75)','end')+txt(X(p.wid),H-8,fmt(p.wid,1)+' m',28,'rgba(255,255,255,.7)','end')+txt(X(0),H-8,'0',28,'rgba(255,255,255,.7)','start');
   el('SL').innerHTML=html;
-  el('L_CAP').innerHTML='Linea gialla: lux a terra dal muro fino al fondo dell\'area, sulla linea della prima luce. La luce sopra soglia arriva fino a '+fmt(r.off+r.far,1)+' m dal muro'+(r.off+r.far>=p.wid?' (tutta l\'area).':' (l\'area è profonda '+fmt(p.wid,1)+' m).')+(r.lat?'':' Nessun punto raggiunge la soglia con una sola luce.')}
+  el('L_CAP').innerHTML='Linea gialla: lux a terra dal muro fino al fondo dell\'area, sulla linea della prima luce. '+(r.lat?'La luce sopra soglia arriva fino a '+fmt(r.off+r.far,1)+' m dal muro'+(r.off+r.far>=p.wid?' (tutta l\'area).':' (l\'area è profonda '+fmt(p.wid,1)+' m).'):'Nessun punto raggiunge la soglia con una sola luce: contano solo le luci sommate.')}
 
 function prvTop(r){var p=r.p;el('T_TITLE').textContent='Vista dall\'alto — mappa dei lux sull\'area';
   var W=900,H=340,mL=40,mR=20,mT=40,mB=40;var sc=Math.min((W-mL-mR)/p.len,(H-mT-mB)/p.wid);var aw=p.len*sc,ah=p.wid*sc;var x0=450-aw/2;
   var html='<rect width="900" height="340" fill="#13202e"/>';
-  html+='<rect x="'+(x0-8)+'" y="'+(mT-8)+'" width="'+(aw+16)+'" height="8" fill="#777"/>'+txt(450,mT-14,'muro',24,'rgba(255,255,255,.8)');
-  html+='<image x="'+x0+'" y="'+mT+'" width="'+aw+'" height="'+ah+'" preserveAspectRatio="none" style="image-rendering:pixelated" href="'+heatImage(r.grid,r.nx,r.ny,p.minlx,r.emax,false)+'"/>';
+  html+='<rect x="'+(x0-8)+'" y="'+(mT-8)+'" width="'+(aw+16)+'" height="8" fill="#777"/>'+txt(450,mT-14,'muro',28,'rgba(255,255,255,.8)');
+  html+='<image x="'+x0+'" y="'+mT+'" width="'+aw+'" height="'+ah+'" preserveAspectRatio="none" style="image-rendering:pixelated" href="'+heatImage(r.grid,r.nx,r.ny,p.minlx,r.e90,false)+'"/>';
   html+='<rect x="'+x0+'" y="'+mT+'" width="'+aw+'" height="'+ah+'" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1.5"/>';
   for(var i=0;i<r.fix.length;i++){var f=r.fix[i];var x=x0+f.x*sc,y=mT+f.y*sc;html+='<circle cx="'+x+'" cy="'+y+'" r="7" fill="#fff" stroke="#000" stroke-width="1.5"/>'+txt(x,y+26,'L'+(i+1),18,'rgba(255,255,255,.85)')}
-  html+=txt(x0,mT+ah+24,'0',24,'rgba(255,255,255,.7)','start')+txt(x0+aw,mT+ah+24,fmt(p.len,1)+' m',24,'rgba(255,255,255,.7)','end');
+  html+=txt(x0,mT+ah+24,'0',28,'rgba(255,255,255,.7)','start')+txt(x0+aw,mT+ah+24,fmt(p.len,1)+' m',28,'rgba(255,255,255,.7)','end');
   el('ST').innerHTML=html;
-  el('T_CAP').innerHTML=legend(p.minlx,r.emax)+'<br>Area '+fmt(p.len,1)+' × '+fmt(p.wid,1)+' m, '+r.points+' '+(r.points===1?'punto luce':'punti luce')+'. Sopra soglia: '+fmt(r.cover,0)+'% dell\'area.'}
+  el('T_CAP').innerHTML=legend(p.minlx,r.e90)+'<br>Area '+fmt(p.len,1)+' × '+fmt(p.wid,1)+' m, '+r.points+' '+(r.points===1?'punto luce':'punti luce')+'. Sopra soglia: '+fmt(r.cover,0)+'% dell\'area.'}
 
 function prvFront(r){var p=r.p;el('F_TITLE').textContent='Vista frontale — lungo il muro';
   var W=900,H=300,gY=230,mL=40,mR=20;var sc=Math.min((W-mL-mR)/p.len,60);var aw=p.len*sc,x0=450-aw/2;
@@ -492,18 +493,18 @@ function prvFront(r){var p=r.p;el('F_TITLE').textContent='Vista frontale — lun
     html+=txt(fx,H-8,'L'+(i+1),18,'rgba(255,255,255,.75)')}
   html+=curve(r.curveX,x0,x0+aw,gY-10,120,p.minlx);
   el('SF').innerHTML=html;
-  el('F_CAP').innerHTML='Linea gialla: lux a terra lungo l\'area, '+(r.cfg.wall?'a metà profondità':'sulla linea delle luci')+'. Triangoli (schematici): portata laterale di ogni luce ('+fmt(r.lat,1)+' m per lato). Minimo nell\'area '+fmt(r.st.min,0)+' lx, medio '+fmt(r.st.avg,0)+' lx.'}
+  el('F_CAP').innerHTML='Linea gialla: lux a terra lungo l\'area, '+(r.cfg.wall?'a metà profondità':'sulla linea delle luci')+'.'+(r.lat?' Triangoli (schematici): portata laterale di ogni luce ('+fmt(r.lat,1)+' m per lato).':'')+' Minimo nell\'area '+fmt(r.st.min,0)+' lx, medio '+fmt(r.st.avg,0)+' lx.'}
 
 function EMAIL(){var via=el('via').value.trim();var r=LAST;var p=r.p;
   var b='SIMLUCE — simulazione illuminotecnica\n'+(via?'Luogo: '+via+'\n':'')+'Data: '+new Date().toLocaleDateString('it-IT')+'\n\nDATI INSERITI\n';
-  if(r.mode==='public'){b+='Illuminazione pubblica\nTratto '+fmt(p.len,0)+' m, marciapiede '+fmt(p.sw,1)+' m, strada '+fmt(p.rw,1)+' m, pali '+(p.side==='left'?'su un lato':p.side==='both'?'su entrambi i lati, di fronte':'su entrambi i lati, sfalsati')+'\nPalo '+fmt(p.H,1)+' m, lampada '+fmt(p.W,0)+' W x '+fmt(p.lmw,0)+' lm/W, manutenzione '+fmt(p.mf,2)+', fascio '+fmt(p.ang,0)+'°, inclinazione '+fmt(p.tilt,0)+'°\nSoglia '+fmt(p.minlx,0)+' lx, sovrapposizione '+fmt(p.ovlp,0)+'%\n'}
+  if(r.mode==='public'){b+='Illuminazione pubblica\nTratto '+fmt(p.len,0)+' m, marciapiede '+fmt(p.sw,1)+' m, strada '+fmt(p.rw,1)+' m, pali '+(p.side==='left'?'su un lato':p.side==='both'?'su entrambi i lati, di fronte':'su entrambi i lati, sfalsati')+'\nPalo '+fmt(p.H,1)+' m, lampada '+fmt(p.W,0)+' W x '+fmt(p.lmw,0)+' lm/W, manutenzione '+fmt(p.mf,2)+', fascio '+fmt(p.ang,0)+'°, inclinazione '+fmt(p.tilt,0)+'°\nSoglia '+fmt(p.minlx,0)+' lx, sovrapposizione '+fmt(p.ovlp,0)+'%'+(p.slope?', pendenza '+fmt(p.slope,0)+'%':'')+'\n'}
   else{b+='Illuminazione privata — '+r.cfg.label+'\nArea '+fmt(p.len,1)+' x '+fmt(p.wid,1)+' m, '+(p.rho===0?'all\'aperto':p.rho>=0.5?'al chiuso con pareti chiare':'al chiuso con pareti scure')+'\nLuci: '+r.points+' x '+fmt(p.W,0)+' W x '+fmt(p.lmw,0)+' lm/W, manutenzione '+fmt(p.mf,2)+', altezza '+fmt(p.H,1)+' m, fascio '+fmt(p.ang,0)+'°, inclinazione '+fmt(p.tilt,0)+'°'+(r.cfg.wall?'':', a '+fmt(r.off,1)+' m dal muro')+'\nSoglia '+fmt(p.minlx,0)+' lx\n'}
   b+='Accensione '+fmt(p.hours,1)+' ore al giorno, energia '+fmt(p.cost,2)+' €/kWh\n\nRISULTATI\n';
   for(var i=0;i<MLIST.length;i++)b+=MLIST[i][0]+': '+MLIST[i][1]+'\n';
   var w=el('WARN').textContent;if(w)b+='\nNote: '+w+'\n';
   b+='\nGenerato con SimLuce — stima di progetto, da verificare con il fotometrico del produttore.';
   window.location.href='mailto:?subject='+encodeURIComponent('Simulazione illuminazione'+(via?' — '+via:''))+'&body='+encodeURIComponent(b)}
-PRESET();DRAWNOW();el('via').addEventListener('input',DRAW);
+PRESET();DRAWNOW();el('via').addEventListener('input',function(){var via=el('via').value.trim();el('PRINTHEAD').textContent=(via?via+' — ':'')+'simulazione del '+new Date().toLocaleDateString('it-IT')});
 </script>
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(function(){})}

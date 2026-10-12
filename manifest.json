@@ -1,5 +1,5 @@
 {
-  "id": "/simulazione-luce/",
+  "id": "./",
   "name": "SimLuce — Simulatore illuminotecnico",
   "short_name": "SimLuce",
   "description": "Simulatore di illuminazione pubblica e privata: lux a terra, distanza tra i pali, copertura e consumi.",

@@ -2,7 +2,7 @@
    Strategia: prima la rete, la cache solo come riserva quando si è offline.
    Così ogni aggiornamento pubblicato arriva subito a chi ha già l'app.
    CACHE va cambiata a ogni pubblicazione. */
-var CACHE = 'simluce-v4';
+var CACHE = 'simluce-v5';
 var FILES = [
   './',
   './index.html',
